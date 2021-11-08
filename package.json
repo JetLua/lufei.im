@@ -6,8 +6,7 @@
   },
   "browserslist": [
     "android >= 8",
-    "ios >= 10",
-    "IE 10"
+    "ios >= 10"
   ],
   "dependencies": {
     "@emotion/react": "^11.5.0",

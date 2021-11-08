@@ -1,10 +1,13 @@
-import {Box} from '@mui/material'
+import Config from './config'
+import Canvas from './canvas'
+import Folder from './folder'
+
 import style from './style.module.scss'
 
 export default React.memo(function() {
   return <section className={style.root}>
-    <Box sx={{display: 'grid'}}>
-
-    </Box>
+    <Folder style={{backgroundColor: 'red'}}/>
+    <Canvas/>
+    <Config/>
   </section>
 })
