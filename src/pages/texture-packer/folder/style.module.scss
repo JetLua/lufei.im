@@ -9,6 +9,19 @@
   canvas {
     display: block;
   }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    white-space: nowrap;
+    border-bottom: 1px solid env.$gray;
+    padding-bottom: 4px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0 12px;
+  }
 }
 
 .receiver {
