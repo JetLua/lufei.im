@@ -1,6 +1,8 @@
 import {default as merge} from './merge'
 import type {Options} from './merge'
 
+export {default as createPromise} from './createPromise'
+
 export function useMount(cb: Function) {
   const ref = React.useRef<Function>()
   ref.current = cb

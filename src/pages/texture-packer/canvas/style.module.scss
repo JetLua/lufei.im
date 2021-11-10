@@ -1,25 +1,23 @@
+@use "sass:math";
 @use '~/style/env.scss';
 
 .root {
   width: 100%;
   min-width: 800px;
   height: 100%;
-  color: rgb(57, 233, 80);
   align-items: center;
   padding: env.$gap;
   border-right: 1px solid env.$gray;
 
   canvas {
+    $size: 20px;
     display: block;
+    width: 100%;
+    height: 100%;
+    background-color: #FFF;
+    background-size: 20px 20px;
+    background-position: 0 0, math.div($size, 2) math.div($size, 2);
+    background-image: linear-gradient(45deg, #cacaca 25%, transparent 25%, transparent 75%, #cacaca 75%, #cacaca),
+      linear-gradient(45deg, #cacaca 25%, transparent 25%, transparent 75%, #cacaca 75%, #cacaca);
   }
-}
-
-.receiver {
-  width: 100%;
-  max-width: 500px;
-  height: 200px;
-  border-radius: 8px;
-  border: 2px dashed gray;
-  justify-self: center;
-  margin: 0 env.$gap;
 }

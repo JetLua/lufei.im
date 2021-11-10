@@ -37,6 +37,7 @@
     justify-content: center;
     align-items: center;
     margin-top: env.$gap;
+    cursor: pointer;
 
     .text {
       font-size: 14px;
@@ -45,12 +46,28 @@
   }
 }
 
-.receiver {
-  width: 100%;
-  max-width: 500px;
-  height: 200px;
-  border-radius: 8px;
-  border: 2px dashed gray;
-  justify-self: center;
-  margin: 0 env.$gap;
+.list {
+  padding: 0;
+
+  .item {
+    color: env.$text;
+
+    &:not(:last-child) {
+      border-bottom: 1px dashed env.$gray;
+    }
+
+    .button {
+      padding: 6px 0;
+    }
+  }
+
+  .icon {
+    width: 24px;
+    height: 24px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: block;
+    margin-right: 8px;
+  }
 }
