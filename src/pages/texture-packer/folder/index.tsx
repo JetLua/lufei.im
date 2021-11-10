@@ -88,7 +88,7 @@ export default React.memo(function({className, onFiles, ...props}: Props) {
           return <ListItem className={style.item} key={i} disablePadding>
             <ListItemButton className={style.button} disableGutters>
               <Icon className={style.icon} file={file}/>
-              <ListItemText primary={file.name}/>
+              <ListItemText primary={file.name} className={style.name} disableTypography/>
             </ListItemButton>
           </ListItem>
         })

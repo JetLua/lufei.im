@@ -1,3 +1,4 @@
+import createPromise from './createPromise'
 import {default as merge} from './merge'
 import type {Options} from './merge'
 
@@ -22,4 +23,12 @@ export function useReducer<T>(state: T, opts?: Options) {
     },
     state
   )
+}
+
+export function readFile(file: File) {
+  const [promise, resolve] = createPromise<string>()
+  const reader = new FileReader()
+  reader.readAsDataURL(file)
+  reader.onload = () => resolve(reader.result as string)
+  return promise
 }

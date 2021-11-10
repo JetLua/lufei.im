@@ -5,12 +5,8 @@
   height: 100vh;
   display: grid;
   grid-template-rows: 1fr;
-  grid-template-columns: 300px 1fr 200px;
+  grid-template-columns: 300px auto 300px;
   align-items: center;
-
-  canvas {
-    display: block;
-  }
 }
 
 .receiver {

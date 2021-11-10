@@ -7,14 +7,18 @@ import style from './style.module.scss'
 
 export default React.memo(function() {
   const [state, dispatch] = useReducer({
-    files: [] as File[]
+    files: [] as File[],
+    cropped: false,
+    extruded: 0
   })
 
   return <section className={style.root}>
-    <Folder style={{width: 300}}
-      onFiles={files => dispatch({files})}
+    <Folder onFiles={files => dispatch({files})}/>
+    <Canvas files={state.files} cropped={state.cropped} extruded={state.extruded}/>
+    <Config
+      cropped={state.cropped}
+      onCrop={cropped => dispatch({cropped})}
+      onExtrude={extruded => dispatch({extruded})}
     />
-    <Canvas files={state.files}/>
-    <Config style={{width: 300}}/>
   </section>
 })

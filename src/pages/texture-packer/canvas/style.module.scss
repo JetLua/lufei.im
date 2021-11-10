@@ -2,12 +2,11 @@
 @use '~/style/env.scss';
 
 .root {
-  width: 100%;
   min-width: 800px;
+  width: 100%;
   height: 100%;
-  align-items: center;
-  padding: env.$gap;
   border-right: 1px solid env.$gray;
+  overflow: auto;
 
   canvas {
     $size: 20px;
