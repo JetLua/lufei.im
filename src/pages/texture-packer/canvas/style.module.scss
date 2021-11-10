@@ -2,10 +2,12 @@
 
 .root {
   width: 100%;
+  min-width: 800px;
   height: 100%;
   color: rgb(57, 233, 80);
   align-items: center;
   padding: env.$gap;
+  border-right: 1px solid env.$gray;
 
   canvas {
     display: block;

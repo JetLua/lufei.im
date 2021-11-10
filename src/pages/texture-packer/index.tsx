@@ -6,8 +6,8 @@ import style from './style.module.scss'
 
 export default React.memo(function() {
   return <section className={style.root}>
-    <Folder/>
+    <Folder style={{width: 300}}/>
     <Canvas/>
-    <Config/>
+    <Config style={{width: 300}}/>
   </section>
 })
