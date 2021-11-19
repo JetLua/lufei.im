@@ -1,7 +1,17 @@
+import {MaxRectsPacker, Rectangle} from 'maxrects-packer'
+
 import {createPromise, readFile, useMount, useReducer} from '~/util'
 import style from './style.module.scss'
 
-export default React.memo(function({className, files, cropped, extruded, ...props}: Props) {
+
+interface Props extends React.PropsWithChildren<React.HTMLAttributes<HTMLElement>> {
+  files: File[]
+  padding: number
+  cropped: boolean
+  extruded: number
+}
+
+export default React.memo(function({className, files, padding, cropped, extruded, ...props}: Props) {
   const [state, dispatch] = useReducer({
     gap: 0,
   })
@@ -10,12 +20,50 @@ export default React.memo(function({className, files, cropped, extruded, ...prop
 
   const {current: mut} = React.useRef<Partial<{
     ctx: CanvasRenderingContext2D
-  }>>({})
+    packer: MaxRectsPacker<{width: number, height: number, x: number, y: number, sprite: Sprite}>
+  }>>({
+    packer: new MaxRectsPacker(2048, 2048)
+  })
+
+  /**
+   * 对图片进行排列
+   */
+  const layout = (sprites: Sprite[], padding = 0) => {
+    const {packer, ctx} = mut
+
+    packer.reset()
+    packer.padding = padding
+    packer.addArray(sprites.map(sprite => ({
+      sprite,
+      width: sprite.width,
+      height: sprite.height,
+      x: 0,
+      y: 0
+    })))
+
+    let w = 0
+    let h = 0
+
+    for (const item of packer.rects) {
+      w = Math.max(item.x + item.width, w)
+      h = Math.max(item.y + item.height, h)
+    }
+
+    dom.current.width = w
+    dom.current.height = h
+    dom.current.style.width = `${w}px`
+    dom.current.style.height = `${h}px`
+
+    for (const item of packer.rects) {
+      ctx.drawImage(item.sprite.canvas, item.x, item.y)
+    }
+  }
 
   React.useEffect(() => {
     Promise.all(Array.from(files, file => {
       return new Promise<HTMLImageElement>(async resolve => {
         const img = new Image()
+        img.dataset.name = file.name
         img.src = await readFile(file)
         img.onload = () => resolve(img)
       })
@@ -23,14 +71,9 @@ export default React.memo(function({className, files, cropped, extruded, ...prop
       let x = 0
       let y = 0
       mut.ctx.clearRect(0, 0, dom.current.offsetWidth, dom.current.offsetHeight)
-      for (const img of imgs) {
-        const sprite = new Sprite({img, cropped, extruded})
-        mut.ctx.drawImage(sprite.canvas, x, y)
-        x += sprite.width
-        y += sprite.height
-      }
+      layout(imgs.map(img => new Sprite({img, cropped, extruded})), padding)
     })
-  }, [files, cropped, extruded])
+  }, [files, cropped, extruded, padding])
 
   useMount(() => {
     dom.current.width = dom.current.offsetWidth
@@ -45,13 +88,10 @@ export default React.memo(function({className, files, cropped, extruded, ...prop
   </section>
 })
 
-interface Props extends React.PropsWithChildren<React.HTMLAttributes<HTMLElement>> {
-  cropped: boolean
-  extruded: number
-  files: File[]
-}
+
 
 class Sprite {
+  name: string
   raw: HTMLImageElement
   canvas: HTMLCanvasElement
   ctx: CanvasRenderingContext2D
@@ -71,6 +111,7 @@ class Sprite {
 
     this.ctx = canvas.getContext('2d')
     this.raw = img
+    this.name = img.dataset.name
 
     if (cropped) this.crop()
     else this.ctx.drawImage(img, 0, 0)
