@@ -1,4 +1,5 @@
-import {MaxRectsPacker, Rectangle} from 'maxrects-packer'
+import {debounce} from '@mui/material'
+import {MaxRectsPacker} from 'maxrects-packer'
 
 import {createPromise, readFile, useMount, useReducer} from '~/util'
 import style from './style.module.scss'
@@ -20,9 +21,12 @@ export default React.memo(function({className, files, padding, cropped, extruded
   const canvas = React.useRef<HTMLCanvasElement>()
 
   const {current: mut} = React.useRef<Partial<{
+    timestamp: number
+    elapsed: number
     ctx: CanvasRenderingContext2D
     packer: MaxRectsPacker<{width: number, height: number, x: number, y: number, sprite: Sprite}>
   }>>({
+    timestamp: 0,
     packer: new MaxRectsPacker(2048, 2048)
   })
 
@@ -61,6 +65,7 @@ export default React.memo(function({className, files, padding, cropped, extruded
   }
 
   React.useEffect(() => {
+    if (!files.length) return
     Promise.all(Array.from(files, file => {
       return new Promise<HTMLImageElement>(async resolve => {
         const img = new Image()
@@ -77,8 +82,6 @@ export default React.memo(function({className, files, padding, cropped, extruded
   }, [files, cropped, extruded, padding])
 
   useMount(() => {
-    canvas.current.width = canvas.current.offsetWidth
-    canvas.current.height = canvas.current.offsetHeight
     mut.ctx = canvas.current.getContext('2d')
 
     root.current.addEventListener('contextmenu', onContextmenu)
@@ -86,6 +89,7 @@ export default React.memo(function({className, files, padding, cropped, extruded
 
     return () => {
       root.current.removeEventListener('contextmenu', onContextmenu)
+      root.current.removeEventListener('wheel', onWheel)
     }
   })
 
@@ -93,10 +97,34 @@ export default React.memo(function({className, files, padding, cropped, extruded
     e.preventDefault()
   }
 
-  const onWheel = (e: WheelEvent) => {
+  const onWheel = (e: WheelEvent & {ctrlKey: boolean}) => {
     e.preventDefault()
+    e.stopPropagation()
+
+    console.log('ctrl', e.ctrlKey)
+
+    const now = Date.now()
+    mut.elapsed = now - mut.timestamp
+
+    if (mut.elapsed > 20) return
+
+    mut.timestamp = now - (mut.elapsed % 20)
     // 无需放缩
-    if (!canvas.current.offsetWidth) return
+    // if (!canvas.current.offsetWidth) return
+    const {offsetWidth: w, offsetHeight: h} = canvas.current
+
+    let scale = 0
+
+    if (e.ctrlKey) {
+      scale -= e.deltaY * .01
+    }
+
+    console.log(scale)
+
+    // if (scale) {
+    //   canvas.current.style.width = `${w * (0 + scale) | 0}px`
+    //   canvas.current.style.height = `${h * (0 + scale) | 0}px`
+    // }
   }
 
   return <section {...props} ref={root}
