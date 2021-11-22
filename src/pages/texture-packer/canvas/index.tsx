@@ -16,7 +16,8 @@ export default React.memo(function({className, files, padding, cropped, extruded
     gap: 0,
   })
 
-  const dom = React.useRef<HTMLCanvasElement>()
+  const root = React.useRef<HTMLElement>()
+  const canvas = React.useRef<HTMLCanvasElement>()
 
   const {current: mut} = React.useRef<Partial<{
     ctx: CanvasRenderingContext2D
@@ -49,10 +50,10 @@ export default React.memo(function({className, files, padding, cropped, extruded
       h = Math.max(item.y + item.height, h)
     }
 
-    dom.current.width = w
-    dom.current.height = h
-    dom.current.style.width = `${w}px`
-    dom.current.style.height = `${h}px`
+    canvas.current.width = w
+    canvas.current.height = h
+    canvas.current.style.width = `${w}px`
+    canvas.current.style.height = `${h}px`
 
     for (const item of packer.rects) {
       ctx.drawImage(item.sprite.canvas, item.x, item.y)
@@ -70,21 +71,38 @@ export default React.memo(function({className, files, padding, cropped, extruded
     })).then(imgs => {
       let x = 0
       let y = 0
-      mut.ctx.clearRect(0, 0, dom.current.offsetWidth, dom.current.offsetHeight)
+      mut.ctx.clearRect(0, 0, canvas.current.offsetWidth, canvas.current.offsetHeight)
       layout(imgs.map(img => new Sprite({img, cropped, extruded})), padding)
     })
   }, [files, cropped, extruded, padding])
 
   useMount(() => {
-    dom.current.width = dom.current.offsetWidth
-    dom.current.height = dom.current.offsetHeight
-    mut.ctx = dom.current.getContext('2d')
+    canvas.current.width = canvas.current.offsetWidth
+    canvas.current.height = canvas.current.offsetHeight
+    mut.ctx = canvas.current.getContext('2d')
+
+    root.current.addEventListener('contextmenu', onContextmenu)
+    root.current.addEventListener('wheel', onWheel)
+
+    return () => {
+      root.current.removeEventListener('contextmenu', onContextmenu)
+    }
   })
 
-  return <section {...props}
+  const onContextmenu = (e: MouseEvent) => {
+    e.preventDefault()
+  }
+
+  const onWheel = (e: WheelEvent) => {
+    e.preventDefault()
+    // 无需放缩
+    if (!canvas.current.offsetWidth) return
+  }
+
+  return <section {...props} ref={root}
     className={[style.root, className].join(' ').trim()}
   >
-    <canvas ref={dom}/>
+    <canvas ref={canvas}/>
   </section>
 })
 

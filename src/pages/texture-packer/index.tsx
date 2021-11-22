@@ -2,7 +2,7 @@ import Config from './config'
 import Canvas from './canvas'
 import Folder from './folder'
 
-import {useReducer} from '~/util'
+import {useMount, useReducer} from '~/util'
 import style from './style.module.scss'
 
 export default React.memo(function() {
@@ -25,7 +25,9 @@ export default React.memo(function() {
       cropped={state.cropped}
       onCrop={cropped => dispatch({cropped})}
       onExtrude={extruded => dispatch({extruded})}
-      onPadding={padding => dispatch({padding})}
+      onPad={padding => dispatch({padding})}
+      padding={state.padding}
+      extruded={state.extruded}
     />
   </section>
 })

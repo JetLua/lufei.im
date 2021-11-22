@@ -3,13 +3,16 @@ import style from './style.module.scss'
 
 interface Props extends React.PropsWithChildren<React.HTMLAttributes<HTMLElement>> {
   cropped: boolean
+  padding: number
+  extruded: number
   onCrop: (ok: boolean) => void
   onExtrude: (extrude: number) => void
-  onPadding: (padding: number) => void
+  onPad: (padding: number) => void
 }
 
 export default React.memo(function({
-  className, cropped, onCrop, onExtrude, onPadding,
+  className, cropped, onCrop, onExtrude, onPad,
+  padding, extruded,
   ...props}: Props) {
   return <section
     {...props}
@@ -21,11 +24,13 @@ export default React.memo(function({
       <Input className={style.input} type="number"
         inputProps={{min: 0, step: 1}}
         onChange={e => onExtrude(+e.target.value)}
+        defaultValue={extruded}
       />
       <i className={style.label}>边距(Padding)</i>
       <Input className={style.input} type="number"
         inputProps={{min: 0, step: 1}}
-        onChange={e => onPadding(+e.target.value)}
+        defaultValue={padding}
+        onChange={e => onPad(+e.target.value)}
       />
       <i className={style.label}>裁剪(Crop)</i>
       <div><Checkbox sx={{margin: 0, padding: 0}} checked={cropped}

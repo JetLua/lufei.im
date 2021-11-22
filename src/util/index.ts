@@ -13,16 +13,10 @@ export function useMount(cb: Function) {
 }
 
 export function useReducer<T>(state: T, opts?: Options) {
-  return React.useReducer(
-    (
-      state: T,
-      data: RecursivePartial<T> | ((old: T) => RecursivePartial<T>)
-    ) => {
-      if (data instanceof Function) return merge<T>(state, data(state), opts)
-      return merge<T>(state, data, opts)
-    },
-    state
-  )
+  return React.useReducer((state: T, data: RecursivePartial<T> | ((old: T) => RecursivePartial<T>)) => {
+    if (data instanceof Function) return merge<T>(state, data(state), opts)
+    return merge<T>(state, data, opts)
+  }, state)
 }
 
 export function readFile(file: File) {
