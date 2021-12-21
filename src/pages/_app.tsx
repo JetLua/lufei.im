@@ -18,7 +18,7 @@ export default React.memo(function({Component, pageProps}: AppProps) {
 })
 
 
-if (typeof navigator !== 'undefined' && navigator.serviceWorker && process.env.PROD) {
+if (process.env.PROD && typeof navigator !== 'undefined' && navigator.serviceWorker) {
   navigator.serviceWorker.register('/js/sw.js', {scope: '/'})
     .then(() => console.log('sw.js: done'))
     .catch(() => console.log('sw.js: failed'))
