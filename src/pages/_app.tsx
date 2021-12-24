@@ -12,8 +12,6 @@ export default React.memo(function({Component, pageProps}: AppProps) {
       <meta httpEquiv="X-UA-Compatible" content="ie=edge"/>
       <link rel="manifest" href="manifest.json"/>
       <link rel="icon" href="/img/favicon.svg"/>
-      {/* <script src="https://pixijs.download/pr-8050/pixi.min.js"/> */}
-      <script src="https://pixijs.download/v6.2.0/pixi.min.js"/>
     </Head>
     <Component {...pageProps}/>
   </React.Fragment>
