@@ -5,9 +5,9 @@
   "devFiles": [],
   "ampDevFiles": [],
   "lowPriorityFiles": [
-    "static/8bCoYhqZQVPgce_9JYlxA/_buildManifest.js",
-    "static/8bCoYhqZQVPgce_9JYlxA/_ssgManifest.js",
-    "static/8bCoYhqZQVPgce_9JYlxA/_middlewareManifest.js"
+    "static/Q0fw49ILjeoUDxjtsJGPh/_buildManifest.js",
+    "static/Q0fw49ILjeoUDxjtsJGPh/_ssgManifest.js",
+    "static/Q0fw49ILjeoUDxjtsJGPh/_middlewareManifest.js"
   ],
   "pages": {
     "/": [
@@ -16,7 +16,7 @@
       "static/chunks/main-d98b4a7f39fdfc80.js",
       "static/chunks/235-a6564246fd04e122.js",
       "static/chunks/464-0c384b4dcc23aa82.js",
-      "static/css/6875c66ab8aa2b59.css",
+      "static/css/f0b4549678029dc1.css",
       "static/chunks/pages/index-39a705fba55fea74.js"
     ],
     "/_app": [
@@ -38,7 +38,7 @@
       "static/chunks/main-d98b4a7f39fdfc80.js",
       "static/chunks/235-a6564246fd04e122.js",
       "static/chunks/464-0c384b4dcc23aa82.js",
-      "static/css/6875c66ab8aa2b59.css",
+      "static/css/f0b4549678029dc1.css",
       "static/chunks/pages/entry-1eb915d8061bf9fe.js"
     ],
     "/texture-packer": [
