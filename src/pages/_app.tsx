@@ -12,6 +12,7 @@ export default React.memo(function({Component, pageProps}: AppProps) {
       <meta httpEquiv="X-UA-Compatible" content="ie=edge"/>
       <link rel="manifest" href="manifest.json"/>
       <link rel="icon" href="/img/favicon.svg"/>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.2.1/browser/pixi.min.js"/>
     </Head>
     <Component {...pageProps}/>
   </React.Fragment>

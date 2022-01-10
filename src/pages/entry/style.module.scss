@@ -1,20 +1,100 @@
 @use '~/style/env.scss';
 
 .root {
-  width: 100%;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(rgb(255, 38, 142) 0%, rgb(255, 105, 79) 100%);
 
-  nav {
-    height: 60px;
-    color: env.$color-text;
-    display: flex;
-    align-items: center;
+  &::before {
+    content: "";
+    width: 140%;
+    height: 140%;
+    position: absolute;
+    top: -40%;
+    right: -50%;
+    background: radial-gradient(at center center, rgb(62, 79, 249) 0%, rgba(62, 79, 249, 0) 64%);
   }
 }
 
-@media screen and (max-width: env.$screen-small) {
-  .root {
-    nav {
-      height: 40px;
+.card {
+  $padding: 16px;
+  $width: 340px;
+
+  width: $width;
+  border-radius: 12px;
+  padding: $padding;
+  background-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(40px);
+
+  .head {
+    display: flex;
+    align-items: flex-start;
+
+    .cover {
+      $width: 100px;
+      width: $width;
+      height: $width;
+      border-radius: 6px;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      flex-shrink: 0;
     }
+
+    .right {
+      flex: 1;
+      margin-left: 16px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+
+      p {
+        font-size: 14px;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        text-align: start;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        &:nth-child(1) {
+          font-weight: bolder;
+          margin-bottom: 6px;
+        }
+
+        &:nth-child(2) {
+          font-size: 12px;
+          color: #555;
+
+          i:first-child {
+            margin-right: 8px;
+          }
+        }
+      }
+
+
+    }
+  }
+
+  .control {
+    display: flex;
+    margin-top: auto;
+    justify-content: space-around;
+  }
+
+  .slider {
+    color: #333;
+    margin: 20px auto 0;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .card {
+    $width: 100px;
   }
 }
