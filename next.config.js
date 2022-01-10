@@ -2,7 +2,8 @@ const path = require('path')
 
 module.exports = {
   env: {
-    PROD: process.env.NODE_ENV === 'production'
+    PROD: process.env.NODE_ENV === 'production',
+    GID: `${Date.now()}`
   },
 
   webpack: (config, {webpack}) => {

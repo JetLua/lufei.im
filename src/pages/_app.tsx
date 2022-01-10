@@ -18,8 +18,19 @@ export default React.memo(function({Component, pageProps}: AppProps) {
 })
 
 
-if (process.env.PROD && typeof navigator !== 'undefined' && navigator.serviceWorker) {
+if (typeof navigator !== 'undefined' && navigator.serviceWorker) {
   navigator.serviceWorker.register('sw.js', {scope: '/'})
-    .then(() => console.log('sw.js: done'))
-    .catch(() => console.log('sw.js: failed'))
+    .then((registration) => {
+      const sw = registration.installing ?? registration.active
+      if (sw.state === 'activated') {
+        sw.postMessage({type: 'GID', id: process.env.GID})
+      } else {
+        sw.onstatechange = e => {
+          if (sw.state === 'activated') {
+            sw.postMessage({type: 'GID', id: process.env.GID})
+          }
+        }
+      }
+    })
+    .catch(err => console.log('sw.js: failed', err.message))
 }

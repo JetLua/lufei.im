@@ -5,21 +5,35 @@
 /**
  * @type {ServiceWorkerGlobalScope}
  */
- const sw = self
+const sw = self
 
- sw.addEventListener('fetch', async e =>  {
-   e.respondWith(fetch(e.request).then(async res => {
-     if (res.status !== 200) return Promise.reject(new Error(res.statusText))
-     caches.open('store').then(cache => cache.add(e.request, res))
-     return res.clone()
-   }).catch(err => {
-     return caches.match(e.request).then(res => {
-       if (res) return res
-       return new Response(JSON.stringify({ok: false, err: err.message}), {status: 200})
-     })
-   }))
- })
+/**
+ * @type {Promise<Cache>}
+ */
+let cache
 
- sw.addEventListener('install', () => {
-   sw.skipWaiting()
- })
+sw.addEventListener('fetch', async e => {
+  e.respondWith(caches.match(e.request).then(res => {
+    if (res) return res
+    else return fetch(e.request).then(res => {
+      if (res.status !== 200 && res.status !== 304) return res
+      cache.then(c => c.put(e.request, res.clone()))
+      return res
+    })
+  }))
+})
+
+sw.addEventListener('install', () => {
+  sw.skipWaiting()
+})
+
+sw.addEventListener('message', e => {
+  caches.keys().then(keys => {
+    for (const key of keys) {
+      if (key === e.data.id) cache = caches.open(key)
+      else caches.delete(key)
+    }
+
+    if (!cache) cache = caches.open(e.data.id)
+  })
+})
