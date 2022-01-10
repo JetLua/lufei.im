@@ -1,5 +1,5 @@
 import {Howl} from 'howler'
-import {IconButton, Slider} from '@mui/material'
+import {IconButton, Slider, Snackbar} from '@mui/material'
 import {FastForwardRounded, FastRewindRounded, PauseRounded, PlayArrowRounded} from '@mui/icons-material'
 
 import type {SliderProps} from '@mui/material'
@@ -13,6 +13,7 @@ export default React.memo(function() {
   const [state, dispatch] = useReducer({
     cursor: 1,
     playing: false,
+    loading: false,
     progress: 0,
     list: [
       {
@@ -40,14 +41,12 @@ export default React.memo(function() {
   })
 
   const {current: mut} = React.useRef({
-    id: undefined as number,
     sound: null as Howl
   })
 
-  React.useEffect(() => {
-    if (!mut.sound) return
-    mut.sound.stop()
-    mut.sound = new Howl({
+  mut.sound = React.useMemo(() => {
+    mut.sound?.stop()
+    return new Howl({
       preload: true,
       autoplay: true,
       src: state.list[state.cursor].src
@@ -55,21 +54,17 @@ export default React.memo(function() {
   }, [state.cursor])
 
   useMount(() => {
-    mut.sound = new Howl({
-      preload: true,
-      src: state.list[state.cursor].src
-    })
     tick()
   })
 
   const tick = () => {
-    setTimeout(tick, 5e2)
-    if (!mut.sound) return
     const progress = mut.sound.seek() / mut.sound.duration() * 1e2
     dispatch({
       playing: mut.sound.playing(),
-      progress: isNaN(progress) ? 0 : progress
+      progress: isNaN(progress) ? 0 : progress,
+      loading: mut.sound.state() === 'loading'
     })
+    setTimeout(tick, 5e2)
   }
 
   const toggle = () => {
@@ -112,7 +107,7 @@ export default React.memo(function() {
         >
           <FastRewindRounded fontSize="large"/>
         </IconButton>
-        <IconButton onClick={toggle}>
+        <IconButton size="large" onClick={toggle}>
           {state.playing ? <PauseRounded fontSize="large"/> : <PlayArrowRounded fontSize="large"/>}
         </IconButton>
         <IconButton disabled={state.cursor === state.list.length - 1}
@@ -122,5 +117,9 @@ export default React.memo(function() {
         </IconButton>
       </div>
     </section>
+
+    <Snackbar message="LOADING..."
+      open={state.loading}
+    ></Snackbar>
   </section>
 })
