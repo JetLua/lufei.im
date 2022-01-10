@@ -1,7 +1,7 @@
 {
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "rm -fr .next && next build",
     "start": "next start"
   },
   "browserslist": [

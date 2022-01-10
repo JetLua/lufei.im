@@ -83,8 +83,11 @@
 
   .control {
     display: flex;
-    margin-top: auto;
     justify-content: space-around;
+
+    button {
+      flex-shrink: 0;
+    }
   }
 
   .slider {

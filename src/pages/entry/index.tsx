@@ -11,7 +11,7 @@ import style from './style.module.scss'
 
 export default React.memo(function() {
   const [state, dispatch] = useReducer({
-    cursor: 0,
+    cursor: 1,
     playing: false,
     progress: 0,
     list: [
@@ -20,8 +20,22 @@ export default React.memo(function() {
         singer: '徐誉滕',
         album: '《滕·爱》',
         src: 'https://static.safish.org/music/%E7%AD%89%E4%B8%80%E5%88%86%E9%92%9F.mp3',
-        cover: 'https://static.safish.org/music/%E7%AD%89%E4%B8%80%E5%88%86%E9%92%9F.cover.webp'
-      }
+        cover: 'https://static.safish.org/music/%E7%AD%89%E4%B8%80%E5%88%86%E9%92%9F.cover.jpg'
+      },
+      {
+        name: '挪威的森林',
+        singer: '伍佰',
+        album: '滚石香港黄金十年 伍佰精选',
+        src: 'https://static.safish.org/music/%E6%8C%AA%E5%A8%81%E7%9A%84%E6%A3%AE%E6%9E%97.mp3',
+        cover: 'https://static.safish.org/music/%E6%8C%AA%E5%A8%81%E7%9A%84%E6%A3%AE%E6%9E%97.cover.jpg'
+      },
+      {
+        name: '发如雪',
+        singer: '周杰伦',
+        album: '十一月的萧邦',
+        src: 'https://static.safish.org/music/%E5%8F%91%E5%A6%82%E9%9B%AA.mp3',
+        cover: 'https://static.safish.org/music/%E5%8F%91%E5%A6%82%E9%9B%AA.cover.jpg'
+      },
     ]
   })
 
@@ -29,6 +43,16 @@ export default React.memo(function() {
     id: undefined as number,
     sound: null as Howl
   })
+
+  React.useEffect(() => {
+    if (!mut.sound) return
+    mut.sound.stop()
+    mut.sound = new Howl({
+      preload: true,
+      autoplay: true,
+      src: state.list[state.cursor].src
+    })
+  }, [state.cursor])
 
   useMount(() => {
     mut.sound = new Howl({
@@ -83,13 +107,17 @@ export default React.memo(function() {
       />
 
       <div className={style.control}>
-        <IconButton disabled={state.cursor < 1}>
+        <IconButton disabled={state.cursor < 1}
+          onClick={() => dispatch({cursor: state.cursor - 1})}
+        >
           <FastRewindRounded fontSize="large"/>
         </IconButton>
         <IconButton onClick={toggle}>
           {state.playing ? <PauseRounded fontSize="large"/> : <PlayArrowRounded fontSize="large"/>}
         </IconButton>
-        <IconButton disabled={state.cursor === state.list.length - 1}>
+        <IconButton disabled={state.cursor === state.list.length - 1}
+          onClick={() => dispatch({cursor: state.cursor + 1})}
+        >
           <FastForwardRounded fontSize="large"/>
         </IconButton>
       </div>
