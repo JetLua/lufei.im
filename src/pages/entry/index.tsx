@@ -1,11 +1,14 @@
-import {Howl} from 'howler'
-import {IconButton, Slider, Snackbar} from '@mui/material'
-import {FastForwardRounded, FastRewindRounded, PauseRounded, PlayArrowRounded} from '@mui/icons-material'
+import {IconButton, Slider, SpeedDial, SpeedDialAction, SpeedDialIcon} from '@mui/material'
+
+import {
+  FastForwardRounded, FastRewindRounded, PauseRounded, PlayArrowRounded,
+  FileUploadRounded, ManageAccountsRounded
+} from '@mui/icons-material'
 
 import type {SliderProps} from '@mui/material'
 
-
 import {useMount, useReducer} from '~/util'
+import Login from './login'
 
 import style from './style.module.scss'
 
@@ -13,7 +16,7 @@ export default React.memo(function() {
   const [state, dispatch] = useReducer({
     cursor: 1,
     playing: false,
-    loading: false,
+    loading: true,
     progress: 0,
     list: [
       {
@@ -37,51 +40,57 @@ export default React.memo(function() {
         src: 'https://static.safish.org/music/%E5%8F%91%E5%A6%82%E9%9B%AA.mp3',
         cover: 'https://static.safish.org/music/%E5%8F%91%E5%A6%82%E9%9B%AA.cover.jpg'
       },
-    ]
+    ],
+    dialog: {
+      visible: false
+    }
   })
 
-  const {current: mut} = React.useRef({
-    sound: null as Howl
-  })
+  const audio = React.useRef<HTMLAudioElement>()
 
-  mut.sound = React.useMemo(() => {
-    mut.sound?.stop()
-    return new Howl({
-      preload: true,
-      autoplay: true,
-      src: state.list[state.cursor].src
-    })
-  }, [state.cursor])
+  const onTimeUpdate = () => {
+    const sound = audio.current
 
-  useMount(() => {
-    tick()
-  })
+    if (!sound) return
 
-  const tick = () => {
-    const progress = mut.sound.seek() / mut.sound.duration() * 1e2
+    const playing = !sound.ended && !sound.paused
+
+    console.log(sound.ended, sound.paused)
+
     dispatch({
-      playing: mut.sound.playing(),
-      progress: isNaN(progress) ? 0 : progress,
-      loading: mut.sound.state() === 'loading'
+      playing,
+      progress: sound.duration ? sound.currentTime / sound.duration * 100 : 0
     })
-    setTimeout(tick, 5e2)
   }
 
   const toggle = () => {
-    if (mut.sound.playing()) {
-      mut.sound.pause()
-    } else {
-      mut.sound.play()
-    }
+    const sound = audio.current
+    const playing = !sound.ended && !sound.paused
+    playing ? sound.pause() : sound.play()
+    dispatch({playing: !playing})
   }
 
   const change: SliderProps['onChange'] = (_, v: number) => {
-    mut.sound.seek(mut.sound.duration() * v / 100)
+    const sound = audio.current
+    sound.currentTime = sound.duration * v / 100
   }
 
   const item = state.list[state.cursor]
 
+  const actions = [
+    {icon: <ManageAccountsRounded/>, name: '账户'},
+    {icon: <FileUploadRounded/>, name: '上传'},
+  ]
+
+
   return <section className={style.root}>
+    <audio autoPlay={true}
+      src={item.src}
+      ref={audio}
+      style={{display: 'none'}}
+      onTimeUpdate={onTimeUpdate}
+      onCanPlay={() => {dispatch({loading: false})}}
+    />
     <section className={style.card}>
       <div className={style.head}>
         <div className={style.cover}
@@ -103,23 +112,48 @@ export default React.memo(function() {
 
       <div className={style.control}>
         <IconButton disabled={state.cursor < 1}
-          onClick={() => dispatch({cursor: state.cursor - 1})}
-        >
-          <FastRewindRounded fontSize="large"/>
-        </IconButton>
+          onClick={() => dispatch({cursor: state.cursor - 1, loading: true})}
+        ><FastRewindRounded fontSize="large"/></IconButton>
         <IconButton size="large" onClick={toggle}>
-          {state.playing ? <PauseRounded fontSize="large"/> : <PlayArrowRounded fontSize="large"/>}
+          {
+            state.loading ? <PlayArrowRounded fontSize="large"/> :
+            state.playing ? <PauseRounded fontSize="large"/> : <PlayArrowRounded fontSize="large"/>
+          }
         </IconButton>
         <IconButton disabled={state.cursor === state.list.length - 1}
-          onClick={() => dispatch({cursor: state.cursor + 1})}
-        >
-          <FastForwardRounded fontSize="large"/>
-        </IconButton>
+          onClick={() => dispatch({cursor: state.cursor + 1, loading: true})}
+        ><FastForwardRounded fontSize="large"/></IconButton>
       </div>
     </section>
 
-    <Snackbar message="LOADING..."
-      open={state.loading}
-    ></Snackbar>
+    <SpeedDial ariaLabel="Action"
+      sx={{
+        position: 'absolute', bottom: 16, right: 16,
+        '& .MuiSpeedDial-fab, & .MuiSpeedDial-fab:hover': {
+          backgroundColor: '#fff'
+        },
+        '& svg': {
+          fill: '#03a9f4'
+        }
+      }}
+      icon={<SpeedDialIcon/>}
+    >
+      {
+        actions.map((item, i) => {
+          return <SpeedDialAction
+            key={i}
+            icon={item.icon}
+            tooltipTitle={item.name}
+            onClick={() => {
+              if (i === 0) dispatch({dialog: {visible: true}})
+            }}
+          />
+        })
+      }
+    </SpeedDial>
+
+    <Login visible={state.dialog.visible}
+      onCancel={() => dispatch({dialog: {visible: false}})}
+    />
   </section>
 })

@@ -11,9 +11,8 @@ type RecursivePartial<T> = {
 }
 
 type Respond<T> = {data: T} & {
-  pageNo: number
-  pageSize: number
-  totalSize: number
+  code: 200 | 401
+  msg: string
 }
 
 // 解压提取api函数ok时的返回类型

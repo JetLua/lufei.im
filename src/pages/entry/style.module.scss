@@ -1,8 +1,7 @@
 @use '~/style/env.scss';
 
 .root {
-  width: 100vw;
-  height: 100vh;
+  height: 100%;
   display: flex;
   overflow: hidden;
   position: relative;
@@ -86,6 +85,7 @@
   .control {
     display: flex;
     justify-content: space-around;
+    align-items: center;
 
     button {
       flex-shrink: 0;
