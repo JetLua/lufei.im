@@ -1,5 +1,6 @@
 import {Button, Dialog, DialogActions, DialogTitle, DialogContent, SvgIcon} from '@mui/material'
 import {useReducer, context, authorize} from '~/util'
+import * as api from '~/api'
 
 import style from './style.module.scss'
 
@@ -12,8 +13,10 @@ export default React.memo(function(props: Props) {
   const ctx = React.useContext(context.context)
 
   const quit = () => {
-    // todo
-    props.onCancel()
+    api.quit().then(() => {
+      ctx.dispatch({user: {name: ''}})
+      props.onCancel()
+    })
   }
 
   return <Dialog

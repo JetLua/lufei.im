@@ -12,7 +12,7 @@ export default React.memo(function({Component, pageProps}: AppProps) {
   })
 
   useMount(() => {
-    api.user().then(([data, err]) => {
+    api.getUser().then(([data, err]) => {
       if (err || data.code !== 200) return
       dispatch({user: {name: data.data.name, avatar: data.data.avatar}})
     })

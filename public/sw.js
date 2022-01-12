@@ -12,13 +12,13 @@ const sw = self
  */
 let cache
 
-sw.addEventListener('fetch', async ({request, respondWith}) => {
-  if (request.url.includes('api.lufei.im')) return respondWith(fetch(request))
-  respondWith(caches.match(request).then(res => {
+sw.addEventListener('fetch', e => {
+  if (e.request.url.includes('api.lufei.im')) return e.respondWith(fetch(e.request))
+  e.respondWith(caches.match(e.request).then(res => {
     if (res) return res
     else return fetch(e.request).then(res => {
       if (res.status !== 200 && res.status !== 304) return res
-      cache?.then(c => c.put(request, res.clone()))
+      cache?.then(c => c.put(e.request, res.clone()))
       return res
     })
   }))

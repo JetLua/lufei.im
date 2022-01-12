@@ -10,7 +10,7 @@ type RecursivePartial<T> = {
   [P in keyof T]?: RecursivePartial<T[P]>
 }
 
-type Respond<T> = {data: T} & {
+type Respond<T = {}> = {data?: T} & {
   code: 200 | 401
   msg: string
 }
