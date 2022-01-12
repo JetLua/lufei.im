@@ -23,6 +23,10 @@
         background-size: 82%;
       }
 
+      &:nth-child(3) {
+        background-size: 76%;
+      }
+
       &:not(:first-child) {
         margin-left: 8px;
       }

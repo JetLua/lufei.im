@@ -42,6 +42,12 @@ export default React.memo(function(props: Props) {
             }}
             onClick={() => authorize('twitter')}
           />
+          <Button
+            sx={{
+              backgroundImage: `url(${require('@/public/img/github.svg').default.src})`
+            }}
+            onClick={() => authorize('github')}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={props.onCancel}>取消</Button>

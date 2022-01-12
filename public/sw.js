@@ -13,7 +13,17 @@ const sw = self
 let cache
 
 sw.addEventListener('fetch', e => {
-  if (e.request.url.includes('api.lufei.im')) return e.respondWith(fetch(e.request))
+  const isApi = e.request.url.includes('api.lufei.im')
+
+  if (isApi && navigator.onLine !== false) {
+    // api online
+    return e.respondWith(fetch(e.request).then(async res => {
+      const data = await res.clone().json()
+      if (data.code === 200) cache?.then(c => c.put(e.request, res.clone()))
+      return res
+    }))
+  }
+
   e.respondWith(caches.match(e.request).then(res => {
     if (res) return res
     else return fetch(e.request).then(res => {

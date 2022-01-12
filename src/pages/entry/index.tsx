@@ -55,8 +55,6 @@ export default React.memo(function() {
 
     const playing = !sound.ended && !sound.paused
 
-    console.log(sound.ended, sound.paused)
-
     dispatch({
       playing,
       progress: sound.duration ? sound.currentTime / sound.duration * 100 : 0
@@ -81,7 +79,6 @@ export default React.memo(function() {
     {icon: <ManageAccountsRounded/>, name: '账户'},
     {icon: <FileUploadRounded/>, name: '上传'},
   ]
-
 
   return <section className={style.root}>
     <audio autoPlay={true}

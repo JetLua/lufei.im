@@ -5,15 +5,17 @@ import {context, useMount, useReducer} from '~/util'
 import * as api from '~/api'
 
 import './style.scss'
+import {Alert, Snackbar} from '@mui/material'
 
 export default React.memo(function({Component, pageProps}: AppProps) {
   const [state, dispatch] = useReducer({
-    user: context.data.user
+    user: context.data.user,
+    error: ''
   })
 
   useMount(() => {
     api.getUser().then(([data, err]) => {
-      if (err || data.code !== 200) return
+      if (err || data.code !== 200) return dispatch({error: err?.message ?? data.msg})
       dispatch({user: {name: data.data.name, avatar: data.data.avatar}})
     })
   })
@@ -37,7 +39,18 @@ export default React.memo(function({Component, pageProps}: AppProps) {
       </script> */}
     </Head>
     <context.context.Provider value={{user: state.user, dispatch}}>
-      <Component {...pageProps}/>
+      <React.Fragment>
+        <Component {...pageProps}/>
+        <Snackbar open={!!state.error}
+          autoHideDuration={3e3}
+          onClose={() => dispatch({error: ''})}
+          anchorOrigin={{vertical: 'top', horizontal: 'center'}}
+        >
+          <Alert severity="error"
+            sx={{width: '100%'}}
+          >{state.error}</Alert>
+        </Snackbar>
+      </React.Fragment>
     </context.context.Provider>
   </React.Fragment>
 })
