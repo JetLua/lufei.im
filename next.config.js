@@ -16,8 +16,7 @@ module.exports = {
     config.plugins.push(
       new webpack.ProvidePlugin({
         React: 'react',
-        ReactDOM: 'react-dom',
-        // PIXI: 'pixi.js'
+        ReactDOM: 'react-dom'
       })
     )
 

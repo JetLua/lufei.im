@@ -77,8 +77,6 @@
           }
         }
       }
-
-
     }
   }
 
@@ -97,6 +95,17 @@
     margin: 20px auto 0;
     display: block;
   }
+}
+
+.sd-button {
+  width: 100% !important;
+  height: 100% !important;
+  min-width: auto;
+  display: block;
+  padding: 0;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 
 @media screen and (max-width: 640px) {

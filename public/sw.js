@@ -15,7 +15,9 @@ let cache
 sw.addEventListener('fetch', e => {
   const online = navigator.onLine !== false
 
-  if (online && e.request.url.endsWith('/')) return fetch(e.request)
+  const url = new URL(e.request.url)
+
+  if (online && url.pathname === '/') return fetch(e.request)
 
   const isApi = e.request.url.includes('api.lufei.im')
 

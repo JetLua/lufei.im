@@ -31,7 +31,7 @@ export function error(err: Error): [null, Error] {
   return [null, err]
 }
 
-export async function authorize(type: 'weibo' | 'twitter' | 'github') {
+export async function authorize(type: 'weibo' | 'twitter' | 'github' | 'facebook') {
   await api.quit()
   switch (type) {
     case 'weibo': {
@@ -46,6 +46,11 @@ export async function authorize(type: 'weibo' | 'twitter' | 'github') {
 
     case 'github': {
       window.open('https://github.com/login/oauth/authorize?client_id=48a72c86f3d065d33914&redirect_uri=https://api.lufei.im&state=github&scope=user', '_self')
+      break
+    }
+
+    case 'facebook': {
+      window.open('https://www.facebook.com/v12.0/dialog/oauth?client_id=256593459931233&redirect_uri=https://api.lufei.im&state=facebook', '_self')
       break
     }
   }

@@ -1,4 +1,4 @@
-import {IconButton, Slider, SpeedDial, SpeedDialAction, SpeedDialIcon} from '@mui/material'
+import {Icon, IconButton, Slider, SpeedDial, SpeedDialAction, SpeedDialIcon} from '@mui/material'
 
 import {
   FastForwardRounded, FastRewindRounded, PauseRounded, PlayArrowRounded,
@@ -7,7 +7,7 @@ import {
 
 import type {SliderProps} from '@mui/material'
 
-import {useMount, useReducer} from '~/util'
+import {useReducer, context, authorize} from '~/util'
 import Login from './login'
 
 import style from './style.module.scss'
@@ -16,7 +16,6 @@ export default React.memo(function() {
   const [state, dispatch] = useReducer({
     cursor: 1,
     playing: false,
-    loading: true,
     progress: 0,
     list: [
       {
@@ -45,6 +44,8 @@ export default React.memo(function() {
       visible: false
     }
   })
+
+  const ctx = React.useContext(context.context)
 
   const audio = React.useRef<HTMLAudioElement>()
 
@@ -86,7 +87,8 @@ export default React.memo(function() {
       ref={audio}
       style={{display: 'none'}}
       onTimeUpdate={onTimeUpdate}
-      onCanPlay={() => {dispatch({loading: false})}}
+      onPause={() => dispatch({playing: false})}
+      onCanPlay={() => audio.current.play()}
     />
     <section className={style.card}>
       <div className={style.head}>
@@ -109,16 +111,13 @@ export default React.memo(function() {
 
       <div className={style.control}>
         <IconButton disabled={state.cursor < 1}
-          onClick={() => dispatch({cursor: state.cursor - 1, loading: true})}
+          onClick={() => dispatch({cursor: state.cursor - 1, playing: false})}
         ><FastRewindRounded fontSize="large"/></IconButton>
         <IconButton size="large" onClick={toggle}>
-          {
-            state.loading ? <PlayArrowRounded fontSize="large"/> :
-            state.playing ? <PauseRounded fontSize="large"/> : <PlayArrowRounded fontSize="large"/>
-          }
+          {state.playing ? <PauseRounded fontSize="large"/> : <PlayArrowRounded fontSize="large"/>}
         </IconButton>
         <IconButton disabled={state.cursor === state.list.length - 1}
-          onClick={() => dispatch({cursor: state.cursor + 1, loading: true})}
+          onClick={() => dispatch({cursor: state.cursor + 1, playing: false})}
         ><FastForwardRounded fontSize="large"/></IconButton>
       </div>
     </section>
@@ -133,7 +132,13 @@ export default React.memo(function() {
           fill: '#03a9f4'
         }
       }}
-      icon={<SpeedDialIcon/>}
+      icon={ctx.user.avatar ? <SpeedDialIcon/> : <div
+        onClick={() => authorize('weibo')}
+        style={{width: '100%', height: '100%'}}
+      ><Icon
+        className={style['sd-button']}
+        sx={{backgroundImage: `url(${require('@/public/img/weibo.svg').default.src})`}}
+      ></Icon></div>}
     >
       {
         actions.map((item, i) => {

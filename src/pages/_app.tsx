@@ -15,7 +15,7 @@ export default React.memo(function({Component, pageProps}: AppProps) {
 
   useMount(() => {
     api.getUser().then(([data, err]) => {
-      if (err || data.code !== 200) return dispatch({error: err?.message ?? data.msg})
+      if (err || data.code !== 200) return data.code !== 401 && dispatch({error: err?.message ?? data.msg})
       dispatch({user: {name: data.data.name, avatar: data.data.avatar}})
     })
   })
