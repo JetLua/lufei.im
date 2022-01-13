@@ -33,7 +33,8 @@ sw.addEventListener('fetch', e => {
   e.respondWith(caches.match(e.request).then(res => {
     if (res) return res
     else return fetch(e.request).then(res => {
-      if (res.status !== 200 && res.status !== 304) return res
+      const statuses = [200, 206, 304]
+      if (!statuses.includes(res.status)) return res
       cache?.then(c => c.put(e.request, res.clone()))
       return res
     })
