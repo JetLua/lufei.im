@@ -132,13 +132,14 @@ export default React.memo(function() {
           fill: '#03a9f4'
         }
       }}
-      icon={ctx.user.avatar ? <SpeedDialIcon/> : <div
-        onClick={() => authorize('weibo')}
-        style={{width: '100%', height: '100%'}}
-      ><Icon
-        className={style['sd-button']}
-        sx={{backgroundImage: `url(${require('@/public/img/weibo.svg').default.src})`}}
-      ></Icon></div>}
+      // icon={ctx.user.avatar ? <SpeedDialIcon/> : <div
+      //   onClick={() => authorize('weibo')}
+      //   style={{width: '100%', height: '100%'}}
+      // ><Icon
+      //   className={style['sd-button']}
+      //   sx={{backgroundImage: `url(${require('@/public/img/weibo.svg').default.src})`}}
+      // ></Icon></div>}
+      icon={<SpeedDialIcon/>}
     >
       {
         actions.map((item, i) => {

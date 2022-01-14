@@ -14,7 +14,7 @@ export default React.memo(function(props: Props) {
 
   const quit = () => {
     api.quit().then(() => {
-      ctx.dispatch({user: {name: ''}})
+      ctx.dispatch({user: {name: '', avatar: ''}})
       props.onCancel()
     })
   }
@@ -47,6 +47,12 @@ export default React.memo(function(props: Props) {
               backgroundImage: `url(${require('@/public/img/github.svg').default.src})`
             }}
             onClick={() => authorize('github')}
+          />
+          <Button
+            sx={{
+              backgroundImage: `url(${require('@/public/img/facebook.svg').default.src})`
+            }}
+            onClick={() => authorize('facebook')}
           />
         </DialogContent>
         <DialogActions>
