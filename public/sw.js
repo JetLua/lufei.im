@@ -12,12 +12,17 @@ const sw = self
  */
 let cache
 
+const statuses = [200, 206, 304, 0]
+
 sw.addEventListener('fetch', e => {
   const online = navigator.onLine !== false
 
   const url = new URL(e.request.url)
 
-  if (online && url.pathname === '/') return fetch(e.request)
+  if (online && url.pathname === '/') return fetch(e.request).then(res => {
+    if (statuses.includes(res.status)) cache?.then(c => c.put(e.request, res.clone()))
+    return res
+  })
 
   const isApi = e.request.url.includes('api.lufei.im')
 
@@ -33,9 +38,7 @@ sw.addEventListener('fetch', e => {
   e.respondWith(caches.match(e.request).then(res => {
     if (res) return res
     else return fetch(e.request).then(res => {
-      const statuses = [200, 206, 304]
-      if (!statuses.includes(res.status)) return res
-      cache?.then(c => c.put(e.request, res.clone()))
+      if (statuses.includes(res.status)) cache?.then(c => c.put(e.request, res.clone()))
       return res
     })
   }))

@@ -57,7 +57,7 @@ export default React.memo(function({Component, pageProps}: AppProps) {
 
 
 if (typeof navigator !== 'undefined' && navigator.serviceWorker) {
-  navigator.serviceWorker.register('sw.js', {scope: '/'})
+  navigator.serviceWorker.register(`sw.js?t=${process.env.GID}`, {scope: '/'})
     .then((registration) => {
       const sw = registration.installing ?? registration.active ?? registration.waiting
       if (sw.state === 'activated') {
