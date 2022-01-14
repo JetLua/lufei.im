@@ -6,6 +6,10 @@ declare const ReactDOM = await import('react-dom')
 declare const ENV: 'prod' | 'mock' | 'dev' | 'test'
 declare const PROD: boolean
 
+interface Navigator {
+  standalone: boolean
+}
+
 type RecursivePartial<T> = {
   [P in keyof T]?: RecursivePartial<T[P]>
 }
