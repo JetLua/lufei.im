@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import Script from 'next/script'
 import type {AppProps} from 'next/app'
 
 import {context, useMount, useReducer} from '~/util'
@@ -16,8 +17,9 @@ export default React.memo(function({Component, pageProps}: AppProps) {
 
   useMount(() => {
     api.getUser().then(([data, err]) => {
-      if (err || data.code !== 200) return data.code !== 401 && dispatch({error: err?.message ?? data.msg})
-      dispatch({user: {name: data.data.name, avatar: data.data.avatar}})
+      if (err) return dispatch({error: err.message})
+      if (data && data.code !== 200) return dispatch({error: data.msg})
+      data?.data && dispatch({user: {name: data.data.name, avatar: data.data.avatar}})
     })
 
     if (navigator.standalone) dispatch({standalone: true})
@@ -55,19 +57,20 @@ export default React.memo(function({Component, pageProps}: AppProps) {
   </React.Fragment>
 })
 
-
 if (typeof navigator !== 'undefined' && navigator.serviceWorker) {
-  navigator.serviceWorker.register(`sw.js?t=${process.env.GID}`, {scope: '/'})
-    .then((registration) => {
-      const sw = registration.installing ?? registration.active ?? registration.waiting
-      if (sw.state === 'activated') {
+  navigator.serviceWorker.getRegistration().then(registration => {
+    if (registration) return registration
+    return navigator.serviceWorker.register('sw.js', {scope: '/'})
+  }).then(registration => {
+    const sw = registration.installing ?? registration.active ?? registration.waiting
+    if (!sw) return
+    if (sw.state === 'activated') {
+      sw.postMessage({type: 'GID', id: process.env.GID})
+    } else {
+      sw.addEventListener('statechange', () => {
+        if (sw.state !== 'activated') return
         sw.postMessage({type: 'GID', id: process.env.GID})
-      } else {
-        sw.addEventListener('statechange', () => {
-          if (sw.state !== 'activated') return
-          sw.postMessage({type: 'GID', id: process.env.GID})
-        })
-      }
-    })
-    .catch(err => console.log('sw.js: failed', err.message))
+      })
+    }
+  }).catch(err => console.log('sw.js: failed', err.message))
 }

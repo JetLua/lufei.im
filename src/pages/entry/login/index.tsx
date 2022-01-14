@@ -14,7 +14,7 @@ export default React.memo(function(props: Props) {
 
   const quit = () => {
     api.quit().then(() => {
-      ctx.dispatch({user: {name: '', avatar: ''}})
+      ctx.dispatch?.({user: {name: '', avatar: ''}})
       props.onCancel()
     })
   }

@@ -47,7 +47,7 @@ export default React.memo(function() {
 
   const ctx = React.useContext(context.context)
 
-  const audio = React.useRef<HTMLAudioElement>()
+  const audio = React.useRef<HTMLAudioElement>(null)
 
   const onTimeUpdate = () => {
     const sound = audio.current
@@ -64,6 +64,7 @@ export default React.memo(function() {
 
   const toggle = () => {
     const sound = audio.current
+    if (!sound) return
     const playing = !sound.ended && !sound.paused
     playing ? sound.pause() : sound.play()
     dispatch({playing: !playing})
@@ -71,6 +72,7 @@ export default React.memo(function() {
 
   const change: SliderProps['onChange'] = (_, v: number) => {
     const sound = audio.current
+    if (!sound) return
     sound.currentTime = sound.duration * v / 100
   }
 
@@ -88,7 +90,7 @@ export default React.memo(function() {
       style={{display: 'none'}}
       onTimeUpdate={onTimeUpdate}
       onPause={() => dispatch({playing: false})}
-      onCanPlay={() => audio.current.play()}
+      onCanPlay={() => audio.current?.play()}
     />
     <section className={style.card}>
       <div className={style.head}>
