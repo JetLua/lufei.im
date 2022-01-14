@@ -16,7 +16,7 @@ let _resolve
  */
 const getCache = new Promise(resolve => _resolve = resolve)
 
-const statuses = [200, 206, 304, 0]
+const statuses = [200, 304]
 const suffixes = /\.(js|mp3|jpg|png|svg|css|json)/
 
 sw.addEventListener('fetch', async e => {
@@ -41,10 +41,9 @@ sw.addEventListener('fetch', async e => {
     }))
   }
 
-  e.respondWith(caches.match(e.request).then(res => {
+  e.respondWith(caches.match(e.request, {ignoreSearch: true, ignoreVary: true}).then(res => {
     if (res) return res
     else return fetch(e.request).then(res => {
-      // if (suffixes.test(url.pathname)) cache.add()
       if (statuses.includes(res.status)) cache.put(e.request, res.clone())
       return res
     })
@@ -55,7 +54,12 @@ sw.addEventListener('install', () => {
   sw.skipWaiting()
 })
 
+sw.addEventListener('activate', () => {
+  console.log('activate')
+})
+
 sw.addEventListener('message', ({data: {type, id}}) => {
+  console.log('message')
   if (type !== 'GID') return
   _resolve(caches.open(id))
   caches.keys().then(keys => {

@@ -101,8 +101,6 @@ export default React.memo(function({className, files, padding, cropped, extruded
     e.preventDefault()
     e.stopPropagation()
 
-    console.log('ctrl', e.ctrlKey)
-
     const now = Date.now()
     mut.elapsed = now - mut.timestamp
 
