@@ -9,29 +9,29 @@
   "description": "从未停止对美好事物的探索",
   "icons": [
     {
-      "src": "/img/favicon.48.svg",
+      "src": "/img/favicon.mac.48.png",
       "sizes": "48x48",
-      "type": "image/svg+xml"
+      "type": "image/png"
     },
     {
-      "src": "/img/favicon.72.svg",
+      "src": "/img/favicon.mac.72.png",
       "sizes": "72x72",
-      "type": "image/svg+xml"
+      "type": "image/png"
     },
     {
-      "src": "/img/favicon.96.svg",
+      "src": "/img/favicon.mac.96.png",
       "sizes": "96x96",
-      "type": "image/svg+xml"
+      "type": "image/png"
     },
     {
-      "src": "/img/favicon.144.svg",
+      "src": "/img/favicon.mac.144.png",
       "sizes": "144x144",
-      "type": "image/svg+xml"
+      "type": "image/png"
     },
     {
-      "src": "/img/favicon.192.svg",
+      "src": "/img/favicon.mac.192.png",
       "sizes": "192x192",
-      "type": "image/svg+xml"
+      "type": "image/png"
     }
   ]
 }
