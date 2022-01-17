@@ -31,10 +31,10 @@ sw.addEventListener('fetch', e => {
 
   if (isApi && online) return e.respondWith(respond(e.request, {priority: 'Network'}))
 
-  e.respondWith(respond(e.request, {priority: 'Cache'}))
+  return e.respondWith(respond(e.request, {priority: 'Cache'}))
 })
 
-sw.addEventListener('install', () => {
+sw.addEventListener('install', e => {
   sw.skipWaiting()
 })
 
@@ -76,7 +76,6 @@ async function respond(req, opts = {}) {
     res = await cache.match(req, {ignoreVary: true, ignoreSearch: true})
     if (!res) {
       res = await fetch(req)
-      !res.ok && console.log(range, req)
       cache.add(req, res.clone())
     }
   }
@@ -85,13 +84,20 @@ async function respond(req, opts = {}) {
 
   const blob = await res.blob()
   let [start, end] = range.replace('bytes=', '').split('-')
+  start = +start
   end = end ? +end : blob.size - 1
+
+  console.log(res.headers.get('access-control-expose-headers'))
+
   return new Response(
     blob.slice(+start, end ? +end : undefined, blob.type),
     {
       status: 206,
       statusText: 'Partial Content',
       headers: {
+        'access-control-allow-methods': 'GET,HEAD',
+        'access-control-allow-origin': '*',
+        'access-control-expose-headers': 'content-length,content-range',
         'content-range': `bytes ${start}-${end}/${blob.size}`,
         'content-length': end - start + 1
       }

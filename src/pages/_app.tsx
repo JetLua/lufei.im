@@ -64,13 +64,6 @@ if (typeof navigator !== 'undefined' && navigator.serviceWorker) {
   }).then(registration => {
     const sw = registration.installing ?? registration.active ?? registration.waiting
     if (!sw) return
-    if (sw.state === 'activated') {
-      sw.postMessage({type: 'GID', id: process.env.GID})
-    } else {
-      sw.addEventListener('statechange', () => {
-        if (sw.state !== 'activated') return
-        sw.postMessage({type: 'GID', id: process.env.GID})
-      })
-    }
+    sw.postMessage({type: 'GID', id: process.env.GID})
   }).catch(err => console.log('sw.js: failed', err.message))
 }
