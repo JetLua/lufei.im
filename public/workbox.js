@@ -1,4 +1,4 @@
-importScripts('https://cdn.jsdelivr.net/npm/workbox-cdn/workbox/workbox-sw.js')
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.4.2/workbox-sw.js')
 workbox.setConfig({debug: false})
 workbox.loadModule('workbox-range-requests')
 workbox.loadModule('workbox-expiration')

@@ -85,7 +85,6 @@ export default React.memo(function() {
 
   return <section className={style.root}>
     <audio autoPlay={true}
-      crossOrigin="anonymous"
       src={item.src}
       ref={audio}
       style={{display: 'none'}}
