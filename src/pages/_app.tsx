@@ -60,7 +60,7 @@ export default React.memo(function({Component, pageProps}: AppProps) {
 if (typeof navigator !== 'undefined' && navigator.serviceWorker) {
   navigator.serviceWorker.getRegistration().then(registration => {
     if (registration) return registration
-    return navigator.serviceWorker.register('sw.js', {scope: '/'})
+    return navigator.serviceWorker.register('workbox.js', {scope: '/'})
   }).then(registration => {
     const sw = registration.installing ?? registration.active ?? registration.waiting
     if (!sw) return
