@@ -1,18 +1,19 @@
 importScripts('https://cdn.jsdelivr.net/npm/workbox-cdn/workbox/workbox-sw.js')
 workbox.setConfig({debug: false})
 workbox.loadModule('workbox-range-requests')
+workbox.loadModule('workbox-expiration')
 
-self.skipWaiting()
 workbox.core.clientsClaim()
+self.skipWaiting()
 
 workbox.routing.registerRoute(
   ({request}) => ['image', 'script', 'style', 'manifest'].includes(request.destination),
-  new workbox.strategies.CacheFirst()
+  new workbox.strategies.NetworkFirst()
 )
 
 workbox.routing.registerRoute(
   ({url}) => url.pathname.endsWith('.mp3'),
-  new workbox.strategies.CacheFirst({
+  new workbox.strategies.NetworkFirst({
     plugins: [
       new workbox.rangeRequests.RangeRequestsPlugin()
     ]
