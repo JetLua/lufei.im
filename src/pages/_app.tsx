@@ -59,8 +59,8 @@ export default React.memo(function({Component, pageProps}: AppProps) {
 
 if (typeof navigator !== 'undefined' && navigator.serviceWorker) {
   navigator.serviceWorker.getRegistration().then(registration => {
-    if (registration && registration.active?.scriptURL.endsWith('workbox.js')) return registration
-    return navigator.serviceWorker.register('workbox.js', {scope: '/'})
+    if (registration && registration.active?.scriptURL.endsWith('sw.js')) return registration
+    return navigator.serviceWorker.register('sw.js', {scope: '/'})
   }).then(registration => {
     const sw = registration.installing ?? registration.active ?? registration.waiting
     if (!sw) return
