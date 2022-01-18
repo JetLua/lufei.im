@@ -80,26 +80,20 @@ async function respond(req, opts = {}) {
     }
   }
 
-  if (!range) return res
+  if (!range || res.status === 206) return res
 
   const blob = await res.blob()
-  let [start, end] = range.replace('bytes=', '').split('-')
-  start = +start
-  end = end ? +end : blob.size - 1
-
-  console.log(res.headers.get('access-control-expose-headers'))
+  const parts = range.replace('bytes=', '').split('-')
+  const start = +parts[0]
+  const end = parts[1] ? +parts[1] : blob.size - 1
 
   return new Response(
-    blob.slice(+start, end ? +end : undefined, blob.type),
+    blob.slice(start, end + 1, blob.type),
     {
       status: 206,
-      statusText: 'Partial Content',
       headers: {
-        'access-control-allow-methods': 'GET,HEAD',
-        'access-control-allow-origin': '*',
-        'access-control-expose-headers': 'content-length,content-range',
-        'content-range': `bytes ${start}-${end}/${blob.size}`,
-        'content-length': end - start + 1
+        'Content-Range': `bytes ${start}-${end}/${blob.size}`,
+        'Content-Length': end - start + 1,
       }
     }
   )
