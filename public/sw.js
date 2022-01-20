@@ -71,12 +71,12 @@ async function respond(req, opts = {}) {
 
   if (opts.priority === 'Network') {
     res = await fetch(req)
-    cache.add(req, res.clone())
+    cache.put(req, res.clone())
   } else {
     res = await cache.match(req, {ignoreVary: true, ignoreSearch: true})
     if (!res) {
       res = await fetch(req)
-      cache.add(req, res.clone())
+      cache.put(req, res.clone())
     }
   }
 
