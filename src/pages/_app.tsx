@@ -1,5 +1,4 @@
 import Head from 'next/head'
-import Script from 'next/script'
 import type {AppProps} from 'next/app'
 
 import {context, useMount, useReducer} from '~/util'
@@ -57,13 +56,65 @@ export default React.memo(function({Component, pageProps}: AppProps) {
   </React.Fragment>
 })
 
+if (typeof indexedDB !== 'undefined') {
+  const request = indexedDB.open('sw')
+
+  const onUpgradeneeded = (request: IDBOpenDBRequest) => {
+    const db = request.result
+    const store = db.createObjectStore('version')
+    const req = store.add({id: 'gid', value: process.env.GID}, 'id')
+    store.createIndex('id', 'id', {unique: true})
+    req.onsuccess = () => {
+      console.log('gid added')
+      db.close()
+    }
+    req.onerror = e => {
+      console.log('gid add failed:', e)
+      db.close()
+    }
+  }
+
+  request.addEventListener('upgradeneeded', () => onUpgradeneeded(request))
+
+  const onSuccess = (request: IDBOpenDBRequest) => {
+    const db = request.result
+
+    if (!db.objectStoreNames.contains('version')) {
+      db.close()
+      const request = indexedDB.open('sw', db.version + 1)
+      request.addEventListener('upgradeneeded', () => onUpgradeneeded(request))
+      return
+    }
+
+    let req = db.transaction('version', 'readwrite')
+      .objectStore('version')
+      .index('id').get('gid')
+
+    req.onsuccess = () => {
+      if (req.result.value === process.env.GID) return
+
+      req = db.transaction('version', 'readwrite')
+        .objectStore('version')
+        .put({id: 'gid', value: process.env.GID}, 'id')
+
+      req.onsuccess = () => {
+        console.log('version updated')
+        db.close()
+      }
+
+      req.onerror = e => {
+        console.log('version update failed:', e)
+        db.close()
+      }
+    }
+  }
+
+  request.addEventListener('success', () => onSuccess(request))
+}
+
 if (typeof navigator !== 'undefined' && navigator.serviceWorker) {
-  navigator.serviceWorker.getRegistration().then(registration => {
-    if (registration && registration.active?.scriptURL.endsWith('sw.js')) return registration
+  navigator.serviceWorker.getRegistration('/').then(registration => {
+    if (registration) return registration
     return navigator.serviceWorker.register('sw.js', {scope: '/'})
-  }).then(registration => {
-    const sw = registration.installing ?? registration.active ?? registration.waiting
-    if (!sw) return
-    sw.postMessage({type: 'GID', id: process.env.GID})
   }).catch(err => console.log('sw.js: failed', err.message))
 }

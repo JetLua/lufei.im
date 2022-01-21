@@ -8,44 +8,35 @@
 const sw = self
 
 /**
- * @type {(opt: Cache | PromiseLike<Cache>) => void}
+ * @type {Cache}
  */
-let _resolve
+let cache
 
-/**
- * @type {Promise<Cache>}
- */
-const getCache = new Promise(resolve => _resolve = resolve)
+const types = ['audio', 'video', 'image']
 
 sw.addEventListener('fetch', e => {
-  if (e.request.destination === 'audio' || e.request.destination === 'video') {
+  if (types.includes(e.request.destination)) {
     return e.respondWith(respond(e.request, {priority: 'Cache'}))
   }
 
-  const online = navigator.onLine !== false
   const url = new URL(e.request.url)
 
-  if (online && url.pathname === '/') return e.respondWith(respond(e.request, {priority: 'Network'}))
+  if (url.pathname === '/') return e.respondWith(respond(e.request, {priority: 'Network'}))
 
   const isApi = url.host === 'api.lufei.im'
 
-  if (isApi && online) return e.respondWith(respond(e.request, {priority: 'Network'}))
+  if (isApi) return e.respondWith(respond(e.request, {priority: 'Network'}))
 
   return e.respondWith(respond(e.request, {priority: 'Cache'}))
 })
 
 sw.addEventListener('install', e => {
-  sw.skipWaiting()
+  e.waitUntil(sw.skipWaiting())
 })
 
-sw.addEventListener('message', ({data: {type, id}}) => {
-  if (type !== 'GID') return
-  _resolve(caches.open(id))
-  caches.keys().then(keys => {
-    for (const key of keys) {
-      key !== id && caches.delete(key)
-    }
-  })
+sw.addEventListener('activate', e => {
+  openDB()
+  e.waitUntil(sw.clients.claim())
 })
 
 /**
@@ -59,7 +50,6 @@ sw.addEventListener('message', ({data: {type, id}}) => {
  * @returns {Response}
  */
 async function respond(req, opts = {}) {
-  const cache = await getCache
   if (!cache) return fetch(req)
 
   /** @type {Response} */
@@ -70,17 +60,24 @@ async function respond(req, opts = {}) {
   req = (range || req.url.includes('static.safish.org')) ? req.url : req
 
   if (opts.priority === 'Network') {
-    res = await fetch(req)
-    cache.put(req, res.clone())
+    res = await fetch(req).then(res => {
+      cache.put(req, res.clone())
+      return res
+    }).catch(() => cache.match(req, {ignoreVary: true, ignoreSearch: true}))
   } else {
     res = await cache.match(req, {ignoreVary: true, ignoreSearch: true})
-    if (!res) {
-      res = await fetch(req)
-      cache.put(req, res.clone())
-    }
+      .then(res => {
+        if (res) return res
+        return fetch(req).then(res => {
+          cache.put(req, res.clone())
+          return res
+        }).cache(() => null)
+      })
   }
 
-  if (!range || res.status === 206) return res
+  if (!res) return new Response('404', {status: 404})
+
+  if (res.status === 206 || !range) return res
 
   const blob = await res.blob()
   const parts = range.replace('bytes=', '').split('-')
@@ -97,4 +94,32 @@ async function respond(req, opts = {}) {
       }
     }
   )
+}
+
+
+function openDB() {
+  const request = indexedDB.open('sw')
+
+  request.onsuccess = () => {
+    const db = request.result
+
+    if (!db.objectStoreNames.contains('version')) return db.close()
+
+    const store = db.transaction('version', 'readonly').objectStore('version')
+    const req = store.index('id').get('gid')
+
+    req.onsuccess = () => {
+      db.close()
+      const id = req.result.value
+      if (!id) return
+      caches.open(id).then(c => cache = c)
+      caches.keys().then(keys => {
+        for (const key of keys) {
+          key !== id && caches.delete(key)
+        }
+      })
+    }
+
+    req.onerror = () => db.close()
+  }
 }
