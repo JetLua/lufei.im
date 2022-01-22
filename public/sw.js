@@ -79,7 +79,7 @@ async function respond(req, opts = {}) {
         return fetch(req).then(res => {
           cache.put(req, res.clone())
           return res
-        }).cache(() => null)
+        }).catch(() => null)
       })
   }
 
