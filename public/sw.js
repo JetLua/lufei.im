@@ -8,11 +8,16 @@
 const sw = self
 
 /**
- * @type {Cache}
+ * @type {(value: any) => void}
  */
-let cache
+let _resolve
 
 const types = ['audio', 'video', 'image']
+
+/**
+ * @type {Promise<Cache>}
+ */
+const getCache = new Promise(resolve => _resolve = resolve)
 
 openDB()
 
@@ -51,6 +56,8 @@ sw.addEventListener('activate', e => {
  * @returns {Response}
  */
 async function respond(req, opts = {}) {
+  const cache = await getCache
+
   if (!cache) return fetch(req)
 
   /** @type {Response} */
@@ -113,7 +120,7 @@ function openDB() {
       db.close()
       const id = req.result.value
       if (!id) return
-      caches.open(id).then(c => cache = c)
+      caches.open(id).then(_resolve)
       caches.keys().then(keys => {
         for (const key of keys) {
           key !== id && caches.delete(key)
@@ -121,6 +128,14 @@ function openDB() {
       })
     }
 
-    req.onerror = () => db.close()
+    req.onerror = () => {
+      db.close()
+      _resolve()
+    }
+  }
+
+  request.onerror = () => {
+    request.result.close()
+    _resolve()
   }
 }
