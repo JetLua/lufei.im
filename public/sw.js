@@ -14,6 +14,8 @@ let cache
 
 const types = ['audio', 'video', 'image']
 
+openDB()
+
 sw.addEventListener('fetch', e => {
   if (types.includes(e.request.destination)) {
     return e.respondWith(respond(e.request, {priority: 'Cache'}))
@@ -35,7 +37,6 @@ sw.addEventListener('install', e => {
 })
 
 sw.addEventListener('activate', e => {
-  openDB()
   e.waitUntil(sw.clients.claim())
 })
 
