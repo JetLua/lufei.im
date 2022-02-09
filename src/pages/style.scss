@@ -9,6 +9,10 @@ html, body, #__next {
 body {
   position: relative;
   background-color: #000;
+
+  &.white {
+    background-color: #fff;
+  }
 }
 
 i {
