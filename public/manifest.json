@@ -7,6 +7,7 @@
   "background_color": "#fff",
   "orientation": "portrait",
   "description": "从未停止对美好事物的探索",
+  "theme_color": "#03a9f4",
   "icons": [
     {
       "src": "/img/favicon.mac.48.png",
