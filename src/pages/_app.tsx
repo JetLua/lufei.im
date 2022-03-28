@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import Script from 'next/script'
 import type {AppProps} from 'next/app'
 
 import {context, useMount, useReducer} from '~/util'
@@ -31,6 +32,7 @@ export default React.memo(function({Component, pageProps}: AppProps) {
       <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0, viewport-fit=cover"/>
       <meta httpEquiv="X-UA-Compatible" content="ie=edge"/>
       <meta name="apple-mobile-web-app-capable" content="yes"/>
+      <meta name="theme-color" content="#03a9f4"/>
       <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
       <link rel="manifest" href="manifest.json"/>
       <link rel="apple-touch-icon" sizes="152x152" href="img/favicon.152.png"/>
@@ -39,6 +41,19 @@ export default React.memo(function({Component, pageProps}: AppProps) {
       <link rel="icon" href="img/favicon.svg"/>
       {state.standalone && <style dangerouslySetInnerHTML={{__html: 'body {height: 100vh !important}'}}/>}
     </Head>
+    <Script
+      strategy="afterInteractive"
+      src="https://www.googletagmanager.com/gtag/js?id=G-GKB6Y10N0P"
+    />
+    <Script
+      strategy="afterInteractive"
+      dangerouslySetInnerHTML={{__html: `
+        window.dataLayer = window.dataLayer || []
+        function gtag(){dataLayer.push(arguments)}
+        gtag('js', new Date())
+        gtag('config', 'G-GKB6Y10N0P')
+      `}}
+    />
     <context.context.Provider value={{user: state.user, dispatch}}>
       <React.Fragment>
         <Component {...pageProps}/>

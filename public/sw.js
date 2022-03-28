@@ -22,6 +22,9 @@ const getCache = new Promise(resolve => _resolve = resolve)
 openDB()
 
 sw.addEventListener('fetch', e => {
+  // POST 请求
+  if (e.request.method === 'POST') return fetch(e.request)
+
   if (types.includes(e.request.destination)) {
     return e.respondWith(respond(e.request, {priority: 'Cache'}))
   }
