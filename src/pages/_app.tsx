@@ -41,17 +41,14 @@ export default React.memo(function({Component, pageProps}: AppProps) {
       <link rel="icon" href="img/favicon.svg"/>
       {state.standalone && <style dangerouslySetInnerHTML={{__html: 'body {height: 100vh !important}'}}/>}
     </Head>
-    <Script
-      strategy="afterInteractive"
-      src="https://www.googletagmanager.com/gtag/js?id=G-GKB6Y10N0P"
-    />
+    <Script strategy="beforeInteractive" src="https://www.googletagmanager.com/gtag/js?id=G-GKB6Y10N0P"/>
     <Script
       strategy="afterInteractive"
       dangerouslySetInnerHTML={{__html: `
-        window.dataLayer = window.dataLayer || []
-        function gtag(){dataLayer.push(arguments)}
-        gtag('js', new Date())
-        gtag('config', 'G-GKB6Y10N0P')
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-GKB6Y10N0P');
       `}}
     />
     <context.context.Provider value={{user: state.user, dispatch}}>
@@ -71,65 +68,65 @@ export default React.memo(function({Component, pageProps}: AppProps) {
   </React.Fragment>
 })
 
-if (typeof indexedDB !== 'undefined') {
-  const request = indexedDB.open('sw')
+// if (typeof indexedDB !== 'undefined') {
+//   const request = indexedDB.open('sw')
 
-  const onUpgradeneeded = (request: IDBOpenDBRequest) => {
-    const db = request.result
-    const store = db.createObjectStore('version')
-    const req = store.add({id: 'gid', value: process.env.GID}, 'id')
-    store.createIndex('id', 'id', {unique: true})
-    req.onsuccess = () => {
-      console.log('gid added')
-      db.close()
-    }
-    req.onerror = e => {
-      console.log('gid add failed:', e)
-      db.close()
-    }
-  }
+//   const onUpgradeneeded = (request: IDBOpenDBRequest) => {
+//     const db = request.result
+//     const store = db.createObjectStore('version')
+//     const req = store.add({id: 'gid', value: process.env.GID}, 'id')
+//     store.createIndex('id', 'id', {unique: true})
+//     req.onsuccess = () => {
+//       console.log('gid added')
+//       db.close()
+//     }
+//     req.onerror = e => {
+//       console.log('gid add failed:', e)
+//       db.close()
+//     }
+//   }
 
-  request.addEventListener('upgradeneeded', () => onUpgradeneeded(request))
+//   request.addEventListener('upgradeneeded', () => onUpgradeneeded(request))
 
-  const onSuccess = (request: IDBOpenDBRequest) => {
-    const db = request.result
+//   const onSuccess = (request: IDBOpenDBRequest) => {
+//     const db = request.result
 
-    if (!db.objectStoreNames.contains('version')) {
-      db.close()
-      const request = indexedDB.open('sw', db.version + 1)
-      request.addEventListener('upgradeneeded', () => onUpgradeneeded(request))
-      return
-    }
+//     if (!db.objectStoreNames.contains('version')) {
+//       db.close()
+//       const request = indexedDB.open('sw', db.version + 1)
+//       request.addEventListener('upgradeneeded', () => onUpgradeneeded(request))
+//       return
+//     }
 
-    let req = db.transaction('version', 'readwrite')
-      .objectStore('version')
-      .index('id').get('gid')
+//     let req = db.transaction('version', 'readwrite')
+//       .objectStore('version')
+//       .index('id').get('gid')
 
-    req.onsuccess = () => {
-      if (req.result.value === process.env.GID) return
+//     req.onsuccess = () => {
+//       if (req.result.value === process.env.GID) return
 
-      req = db.transaction('version', 'readwrite')
-        .objectStore('version')
-        .put({id: 'gid', value: process.env.GID}, 'id')
+//       req = db.transaction('version', 'readwrite')
+//         .objectStore('version')
+//         .put({id: 'gid', value: process.env.GID}, 'id')
 
-      req.onsuccess = () => {
-        console.log('version updated')
-        db.close()
-      }
+//       req.onsuccess = () => {
+//         console.log('version updated')
+//         db.close()
+//       }
 
-      req.onerror = e => {
-        console.log('version update failed:', e)
-        db.close()
-      }
-    }
-  }
+//       req.onerror = e => {
+//         console.log('version update failed:', e)
+//         db.close()
+//       }
+//     }
+//   }
 
-  request.addEventListener('success', () => onSuccess(request))
-}
+//   request.addEventListener('success', () => onSuccess(request))
+// }
 
-if (typeof navigator !== 'undefined' && navigator.serviceWorker) {
-  navigator.serviceWorker.getRegistration('/').then(registration => {
-    if (registration) return registration
-    return navigator.serviceWorker.register('sw.js', {scope: '/'})
-  }).catch(err => console.log('sw.js: failed', err.message))
-}
+// if (typeof navigator !== 'undefined' && navigator.serviceWorker) {
+//   navigator.serviceWorker.getRegistration('/').then(registration => {
+//     if (registration) return registration
+//     return navigator.serviceWorker.register('sw.js', {scope: '/'})
+//   }).catch(err => console.log('sw.js: failed', err.message))
+// }
