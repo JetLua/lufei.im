@@ -16,19 +16,14 @@ export default React.memo(function({Component, pageProps}: AppProps) {
   })
 
   useMount(() => {
-    api.getUser().then(([data, err]) => {
-      if (err) return dispatch({error: err.message})
-      if (data && data.code !== 200) return dispatch({error: data.msg})
-      data?.data && dispatch({user: {name: data.data.name, avatar: data.data.avatar}})
-    })
-
     if (navigator.standalone) dispatch({standalone: true})
   })
 
   return <React.Fragment>
     <Head>
-      <title>Zero</title>
+      <title>Choogo</title>
       <meta name="description" content="从未停止对美好事物的探索"/>
+      <meta name="keywords" content="choogo.app"></meta>
       <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0, viewport-fit=cover"/>
       <meta httpEquiv="X-UA-Compatible" content="ie=edge"/>
       <meta name="apple-mobile-web-app-capable" content="yes"/>
@@ -40,17 +35,14 @@ export default React.memo(function({Component, pageProps}: AppProps) {
       <link rel="apple-touch-icon" sizes="167x167" href="img/favicon.167.png"/>
       <link rel="icon" href="img/favicon.svg"/>
       {state.standalone && <style dangerouslySetInnerHTML={{__html: 'body {height: 100vh !important}'}}/>}
+      <script dangerouslySetInnerHTML={{
+        __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-KJS8J7M');`
+      }}/>
     </Head>
-    <Script strategy="beforeInteractive" src="https://www.googletagmanager.com/gtag/js?id=G-GKB6Y10N0P"/>
-    <Script
-      strategy="afterInteractive"
-      dangerouslySetInnerHTML={{__html: `
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-GKB6Y10N0P');
-      `}}
-    />
     <context.context.Provider value={{user: state.user, dispatch}}>
       <React.Fragment>
         <Component {...pageProps}/>
