@@ -57,7 +57,7 @@ export default React.memo(function() {
         {Array.from({length: 12}, (_, i) => <MenuItem key={i} value={1 + i}>{1 + i}</MenuItem>)}
       </Select>
     </div>
-    <section className="grid grid-cols-7 max-w-screen-lg mx-auto lg:border">
+    <section className="transition-all grid grid-cols-7 max-w-screen-lg mx-auto md:border md:rounded-lg overflow-hidden md:w-fit md:shadow-2xl">
       {Array.from({length: 7}, (_, i) => {
         return <div key={i}
           className="text-center bg-teal-500 text-white py-2"
@@ -69,7 +69,7 @@ export default React.memo(function() {
           <p className="text-lg text-lime-800">{day}</p>
           <p className="text-xs text-stone-400">{IDayCn === '初一' ? IMonthCn : IDayCn}</p>
         </React.Fragment>
-        return <div key={i} className="text-center py-2">
+        return <div key={i} className="text-center py-2 md:px-4 transition-all">
           {day ? child : ''}
         </div>
       })}
