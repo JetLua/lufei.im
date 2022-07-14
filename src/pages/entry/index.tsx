@@ -1,4 +1,5 @@
-import {Select, MenuItem, InputLabel, FormControl} from '@mui/material'
+import {Select, MenuItem, InputLabel, FormControl, Button, IconButton} from '@mui/material'
+import {KeyboardArrowLeftRounded, KeyboardArrowRightRounded, KeyboardDoubleArrowLeftRounded, KeyboardDoubleArrowRightRounded} from '@mui/icons-material'
 
 import {calendar} from '~/mod'
 import {useMount, useReducer} from '~/util'
@@ -45,6 +46,14 @@ export default React.memo(function() {
 
   return <section>
     <div className="text-center py-2 lg:py-4 transition-all text-lg text-teal-900">
+      <IconButton onClick={() => dispatch({month: state.year - 1})}><KeyboardDoubleArrowLeftRounded/></IconButton>
+      <IconButton
+        className="mr-2"
+        onClick={() => {
+          if (state.month === 1) return dispatch({year: state.year - 1, month: 12})
+          dispatch({month: state.month - 1})
+        }}
+      ><KeyboardArrowLeftRounded/></IconButton>
       <Select variant="standard" value={state.year}
         onChange={e => dispatch({year: +e.target.value})}
       >
@@ -56,6 +65,14 @@ export default React.memo(function() {
       >
         {Array.from({length: 12}, (_, i) => <MenuItem key={i} value={1 + i}>{1 + i}</MenuItem>)}
       </Select>
+      <IconButton
+        className="ml-2"
+        onClick={() => {
+          if (state.month === 12) return dispatch({year: state.year + 1, month: 1})
+          dispatch({month: state.month + 1})
+        }}
+      ><KeyboardArrowRightRounded/></IconButton>
+      <IconButton><KeyboardDoubleArrowRightRounded/></IconButton>
     </div>
     <section className="transition-all grid grid-cols-7 max-w-screen-lg mx-auto md:border md:rounded-lg overflow-hidden md:w-fit md:shadow-2xl">
       {Array.from({length: 7}, (_, i) => {
