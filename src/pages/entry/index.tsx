@@ -6,10 +6,10 @@ import {useMount, useReducer} from '~/util'
 
 export default React.memo(function() {
   const date = new Date()
+
   const weekNames = ['日', '一', '二', '三', '四', '五', '六']
 
   const [state, dispatch] = useReducer({
-    today: date,
     year: date.getFullYear(),
     month: date.getMonth() + 1,
     day: date.getDate(),
@@ -74,19 +74,23 @@ export default React.memo(function() {
       ><KeyboardArrowRightRounded/></IconButton>
       <IconButton disabled={state.year === 2100} onClick={() => dispatch({year: state.year + 1})}><KeyboardDoubleArrowRightRounded/></IconButton>
     </div>
-    <section className="transition-all grid grid-cols-7 max-w-screen-lg mx-auto md:border md:rounded-lg overflow-hidden md:w-fit md:shadow-2xl">
+    <section className="max-w-full transition-all grid grid-cols-7 md:max-w-screen-md mx-auto md:border md:rounded-lg overflow-hidden md:shadow-2xl" style={{maxWidth: 500}}>
       {Array.from({length: 7}, (_, i) => {
         return <div key={i}
           className="text-center bg-teal-500 text-white py-2"
         >{weekNames[i]}</div>
       })}
 
-      {days.map(({day, IDayCn, IMonthCn}, i) => {
+      {days.map(({day, IDayCn, IMonthCn, festival, lunarFestival, isToday}, i) => {
+        const color = lunarFestival ? 'text-rose-500' :
+          festival ? 'text-sky-500' : 'text-stone-400'
         const child = <React.Fragment>
           <p className="text-lg text-lime-800">{day}</p>
-          <p className="text-xs text-stone-400">{IDayCn === '初一' ? IMonthCn : IDayCn}</p>
+          <p className={`text-xs ${color} overflow-hidden text-ellipsis whitespace-nowrap`}>
+            {lunarFestival ? lunarFestival : festival ? festival : IDayCn === '初一' ? IMonthCn : IDayCn}
+          </p>
         </React.Fragment>
-        return <div key={i} className="text-center py-2 md:px-4 transition-all">
+        return <div key={i} className={`text-center py-2 md:px-4 transition-all hover:bg-lime-100 cursor-pointer ${isToday ? 'bg-teal-100' : ''}`}>
           {day ? child : ''}
         </div>
       })}

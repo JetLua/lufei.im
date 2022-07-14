@@ -3,7 +3,6 @@ import Script from 'next/script'
 import type {AppProps} from 'next/app'
 
 import {context, useMount, useReducer} from '~/util'
-import * as api from '~/api'
 
 import './style.scss'
 
