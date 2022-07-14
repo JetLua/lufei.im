@@ -46,7 +46,7 @@ export default React.memo(function() {
 
   return <section>
     <div className="text-center py-2 lg:py-4 transition-all text-lg text-teal-900">
-      <IconButton onClick={() => dispatch({month: state.year - 1})}><KeyboardDoubleArrowLeftRounded/></IconButton>
+      <IconButton disabled={state.year === 1900} onClick={() => dispatch({year: state.year - 1})}><KeyboardDoubleArrowLeftRounded/></IconButton>
       <IconButton
         className="mr-2"
         onClick={() => {
@@ -57,7 +57,7 @@ export default React.memo(function() {
       <Select variant="standard" value={state.year}
         onChange={e => dispatch({year: +e.target.value})}
       >
-        {Array.from({length: 200}, (_, i) => <MenuItem key={i} value={1900 + i}>{1900 + i}</MenuItem>)}
+        {Array.from({length: 201}, (_, i) => <MenuItem key={i} value={1900 + i}>{1900 + i}</MenuItem>)}
       </Select>
       <Select variant="standard" value={state.month}
         onChange={e => dispatch({month: +e.target.value})}
@@ -72,7 +72,7 @@ export default React.memo(function() {
           dispatch({month: state.month + 1})
         }}
       ><KeyboardArrowRightRounded/></IconButton>
-      <IconButton><KeyboardDoubleArrowRightRounded/></IconButton>
+      <IconButton disabled={state.year === 2100} onClick={() => dispatch({year: state.year + 1})}><KeyboardDoubleArrowRightRounded/></IconButton>
     </div>
     <section className="transition-all grid grid-cols-7 max-w-screen-lg mx-auto md:border md:rounded-lg overflow-hidden md:w-fit md:shadow-2xl">
       {Array.from({length: 7}, (_, i) => {
