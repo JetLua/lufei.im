@@ -22,7 +22,7 @@ export default React.memo(function({Component, pageProps}: AppProps) {
     <Head>
       <title>Choogo</title>
       <meta name="description" content="从未停止对美好事物的探索"/>
-      <meta name="keywords" content="choogo.app"></meta>
+      <meta name="keywords" content="choogo.app,日历,农历,万年历"></meta>
       <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0, viewport-fit=cover"/>
       <meta httpEquiv="X-UA-Compatible" content="ie=edge"/>
       <meta name="apple-mobile-web-app-capable" content="yes"/>
