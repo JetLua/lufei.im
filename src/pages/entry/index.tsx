@@ -44,6 +44,17 @@ export default React.memo(function() {
     return days
   }, [today])
 
+  useMount(() => {
+    const date = new Date()
+
+    dispatch({
+      year: date.getFullYear(),
+      month: date.getMonth() + 1,
+      day: date.getDate(),
+      week: date.getDay()
+    })
+  })
+
   return <section>
     <div className="text-center py-2 lg:py-4 transition-all text-lg text-teal-900">
       <IconButton disabled={state.year === 1901} onClick={() => dispatch({year: state.year - 1})}><KeyboardDoubleArrowLeftRounded/></IconButton>
