@@ -1,1 +1,1 @@
-export {default} from './entry'
+export {default, getServerSideProps} from './entry'

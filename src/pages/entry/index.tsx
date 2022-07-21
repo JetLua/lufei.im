@@ -1,19 +1,29 @@
-import {Select, MenuItem, InputLabel, FormControl, Button, IconButton} from '@mui/material'
+import {v4 as uuid} from 'uuid'
+
+import {Select, MenuItem, Card, IconButton} from '@mui/material'
 import {KeyboardArrowLeftRounded, KeyboardArrowRightRounded, KeyboardDoubleArrowLeftRounded, KeyboardDoubleArrowRightRounded} from '@mui/icons-material'
 
 import {calendar} from '~/mod'
 import {useMount, useReducer} from '~/util'
 
-export default React.memo(function() {
-  const date = new Date()
+interface Props extends React.DOMAttributes<HTMLElement> {
+  year: number
+  month: number
+  day: number
+  week: number
+}
 
+export default React.memo(function({year, month, day, week, ...props}: Props) {
   const weekNames = ['日', '一', '二', '三', '四', '五', '六']
 
   const [state, dispatch] = useReducer({
-    year: date.getFullYear(),
-    month: date.getMonth() + 1,
-    day: date.getDate(),
-    week: date.getDay()
+    year, month, day, week,
+    details: {
+      gzDay: '',
+      gzMonth: '',
+      gzYear: '',
+      cDay: day
+    }
   })
 
   const today = React.useMemo(() => {
@@ -46,14 +56,19 @@ export default React.memo(function() {
 
   useMount(() => {
     const date = new Date()
+    const year = date.getFullYear()
+    const month = date.getMonth() + 1
+    const day = date.getDate()
+
+    const details = calendar.solar2lunar(year, month, day)
 
     dispatch({
-      year: date.getFullYear(),
-      month: date.getMonth() + 1,
-      day: date.getDate(),
-      week: date.getDay()
+      year, month, day,
+      details: details === -1 ? {} : details
     })
   })
+
+  const {details} = state
 
   return <section>
     <div className="text-center py-2 lg:py-4 transition-all text-lg text-teal-900">
@@ -85,27 +100,61 @@ export default React.memo(function() {
       ><KeyboardArrowRightRounded/></IconButton>
       <IconButton disabled={state.year === 2100} onClick={() => dispatch({year: state.year + 1})}><KeyboardDoubleArrowRightRounded/></IconButton>
     </div>
-    <section className="max-w-full transition-all grid grid-cols-7 md:max-w-500 mx-auto md:border md:rounded-lg overflow-hidden md:shadow-2xl">
-      {Array.from({length: 7}, (_, i) => {
-        return <div key={i}
-          className="text-center bg-teal-500 text-white py-2"
-        >{weekNames[i]}</div>
-      })}
+    <section>
+      <section className="max-w-full transition-all grid grid-cols-7 md:max-w-500 mx-auto md:border md:rounded-lg overflow-hidden md:shadow-2xl">
+        {Array.from({length: 7}, (_, i) => {
+          return <div key={i}
+            className="text-center bg-teal-500 text-white py-2"
+          >{weekNames[i]}</div>
+        })}
 
-      {days.map(({day, cYear, cMonth, IDayCn, IMonthCn, festival, lunarFestival, isToday}, i) => {
-        const color = lunarFestival ? 'text-rose-500' :
-          festival ? 'text-sky-500' : 'text-stone-400'
-        const child = <React.Fragment>
-          <p className="text-lg text-lime-800">{day}</p>
-          <p className={`text-xs ${color} overflow-hidden text-ellipsis whitespace-nowrap`}>
-            {lunarFestival ? lunarFestival : festival ? festival : IDayCn === '初一' ? IMonthCn : IDayCn}
-          </p>
-        </React.Fragment>
-        const key = cYear ? `${cYear}${cMonth}${day}` : i
-        return <div key={key} className={`text-center py-2 md:px-4 transition-all hover:bg-lime-100 cursor-pointer ${isToday ? 'bg-teal-100' : ''} ${cYear ? '' : 'invisible'}`}>
-          {day ? child : ''}
-        </div>
-      })}
+        {days.map(({
+          day, cYear, cMonth, IDayCn, IMonthCn, festival,
+          lunarFestival, isToday, gzYear, gzMonth, gzDay
+        }, i) => {
+          const color = lunarFestival ? 'text-rose-500' :
+            festival ? 'text-sky-500' : 'text-stone-400'
+
+          const child = <React.Fragment>
+            <p className="text-lg text-lime-800">{day}</p>
+            <p className={`text-xs ${color} overflow-hidden text-ellipsis whitespace-nowrap`}>
+              {lunarFestival ? lunarFestival : festival ? festival : IDayCn === '初一' ? IMonthCn : IDayCn}
+            </p>
+          </React.Fragment>
+
+          return <div key={uuid()}
+            onClick={() => {dispatch({details: {gzDay, gzMonth, gzYear, cDay: day}})}}
+            className={[
+              'text-center', 'py-2',
+              'md:px-4', 'transition-all',
+              'hover:bg-lime-100', 'cursor-pointer',
+              isToday ? 'bg-teal-100' : '',
+              cYear ? '' : 'invisible'
+            ].join(' ')}
+          >{day ? child : ''}</div>
+        })}
+      </section>
+      <Card className={['m-4', 'p-4', 'md:max-w-500', 'md:m-auto', 'md:mt-8'].join(' ')}>
+        <p className="text-center text-teal-700">
+          <span>{details.gzYear}年</span>
+          <span className="ml-2">{details.gzMonth}月</span>
+          <span className="ml-2">{details.gzDay}日</span>
+        </p>
+        <p className="text-emerald-600 mt-4 text-4xl text-center text">{details.cDay}</p>
+      </Card>
     </section>
   </section>
 })
+
+export async function getServerSideProps() {
+  const now = new Date()
+
+  return {
+    props: {
+      year: now.getFullYear(),
+      month: now.getMonth() + 1,
+      day: now.getDate(),
+      week: now.getDay()
+    }
+  }
+}
