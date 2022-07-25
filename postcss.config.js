@@ -1,8 +1,8 @@
 module.exports = {
-  plugins: [
-    ['autoprefixer', {
-      grid: 'autoplace',
-      flexbox: true
-    }]
-  ]
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {
+      grid: 'autoplace'
+    },
+  }
 }
