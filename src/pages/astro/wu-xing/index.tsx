@@ -9,11 +9,11 @@ export default React.memo(function() {
     const svg = SVG().addTo(dom.current).size(400, 400).viewbox(0, 0, 400, 400)
     const R = 150
     const properties = [
-      {text: '木', bg: '#98ee99', color: '#212121'},
-      {text: '火', bg: '#ff6090', color: '#fff'},
-      {text: '土', bg: '#a98274', color: '#fff'},
-      {text: '金', bg: '#eee', color: '#212121'},
-      {text: '水', bg: '#212121', color: '#fff'},
+      {text: '木', bg: '#98ee99'},
+      {text: '火', bg: '#ff6090'},
+      {text: '土', bg: '#a98274'},
+      {text: '金', bg: '#eeeeee'},
+      {text: '水', bg: '#212121'},
     ]
 
     svg
@@ -27,8 +27,12 @@ export default React.memo(function() {
 
       const g = svg.group()
       const r = 50
-      const text = svg.text(item.text).font({fill: item.color, size: 20, align: 'middle'})
-      const c =  svg.circle(r).fill(item.bg)
+      const text = svg.text(item.text).font({fill: '#333', size: 20, align: 'middle'})
+      const c =  svg.circle(r)
+        .fill(svg.gradient('radial', add => {
+          add.stop(0, '#fff')
+          add.stop(1, item.bg)
+        }))
 
 
       {
