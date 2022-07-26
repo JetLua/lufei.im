@@ -1,4 +1,5 @@
 import {v4 as uuid} from 'uuid'
+import Head from 'next/head'
 
 import {Select, MenuItem, Card, IconButton} from '@mui/material'
 import {KeyboardArrowLeftRounded, KeyboardArrowRightRounded, KeyboardDoubleArrowLeftRounded, KeyboardDoubleArrowRightRounded} from '@mui/icons-material'
@@ -71,6 +72,10 @@ export default React.memo(function({year, month, day, week, ...props}: Props) {
   const {details} = state
 
   return <section>
+    <Head>
+      <title>日历</title>
+      <meta name="keywords" content="老黄历,农历,日历"/>
+    </Head>
     <div className="text-center py-2 lg:py-4 transition-all text-lg text-teal-900">
       <IconButton disabled={state.year === 1901} onClick={() => dispatch({year: state.year - 1})}><KeyboardDoubleArrowLeftRounded/></IconButton>
       <IconButton
