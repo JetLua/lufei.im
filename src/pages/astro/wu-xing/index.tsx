@@ -104,7 +104,6 @@ export default React.memo(function() {
           rotate: 36 + i * 72,
           translate: [x, y]
         })
-        // .attr({fill: gradient})
     }
 
     return () => svg.remove()
