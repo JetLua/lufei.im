@@ -3,6 +3,7 @@ import {useMount} from '~/util'
 
 import style from './style.module.scss'
 
+
 export default React.memo(function() {
   const dom = React.useRef<HTMLElement>()
 

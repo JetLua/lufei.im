@@ -9,7 +9,7 @@ export default React.memo(function() {
   return <section>
     <Head>
       <title>神机妙算</title>
-      <meta name="八字,奇门遁甲"/>
+      <meta name="keywords" content="八字,奇门遁甲"/>
     </Head>
 
     <WuXing/>
