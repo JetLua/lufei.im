@@ -17,8 +17,6 @@ export default React.memo(function() {
       {text: '水', bg: '#b3e5fc'},
     ]
 
-
-
     const translates = properties.map((item, i) => {
       const g = svg.group()
       const r = 50
